@@ -754,3 +754,63 @@ textarea.form-input {
   background: var(--border-color);
   margin: 24px 0;
 }
+
+/* Working hours (Venues page) */
+.working-hours-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.working-hours-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-input);
+}
+
+.working-hours-row.is-closed {
+  opacity: 0.7;
+}
+
+.working-hours-day {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 120px;
+  flex-shrink: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.working-hours-day input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.working-hours-times {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.working-hours-times .form-input {
+  width: auto;
+  flex: 1;
+}
+
+.working-hours-sep {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.working-hours-closed-badge {
+  margin-left: auto;
+}

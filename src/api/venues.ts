@@ -1,6 +1,6 @@
 import apiClient from './client';
 import { ApiEnvelope, ListParams, PaginatedEnvelope } from '../types/api';
-import { Venue, VenueFormData, VenueStatus } from '../types/venue';
+import { Venue, VenueFormData, VenueStatus, VenueWorkingHour, VenueWorkingHourInput } from '../types/venue';
 
 export interface VenueListParams extends ListParams {
   status?: VenueStatus;
@@ -29,4 +29,20 @@ export const updateVenue = async (id: number, data: Partial<VenueFormData>): Pro
 
 export const deleteVenue = async (id: number): Promise<void> => {
   await apiClient.delete(`/api/admin/venues/${id}`);
+};
+
+export const getVenueWorkingHours = async (venueId: number): Promise<VenueWorkingHour[]> => {
+  const response = await apiClient.get<ApiEnvelope<VenueWorkingHour[]>>(`/api/admin/venues/${venueId}/working-hours`);
+  return response.data.data;
+};
+
+export const updateVenueWorkingHours = async (
+  venueId: number,
+  days: VenueWorkingHourInput[]
+): Promise<VenueWorkingHour[]> => {
+  const response = await apiClient.put<ApiEnvelope<VenueWorkingHour[]>>(
+    `/api/admin/venues/${venueId}/working-hours`,
+    { days }
+  );
+  return response.data.data;
 };
