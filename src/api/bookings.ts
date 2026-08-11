@@ -28,3 +28,19 @@ export const cancelBooking = async (id: number, reason?: string): Promise<Bookin
   const response = await apiClient.post<ApiEnvelope<Booking>>(`/api/admin/bookings/${id}/cancel`, { reason });
   return response.data.data;
 };
+
+// One unit per call — the backend only accepts item_id, never a quantity
+// (see AddBookingItemRequest); repeated calls increment/decrement in place.
+// Both return the full updated booking (items + recalculated totals), so
+// callers don't need a separate refetch.
+export const addBookingItem = async (bookingId: number, itemId: number): Promise<Booking> => {
+  const response = await apiClient.post<ApiEnvelope<Booking>>(`/api/admin/bookings/${bookingId}/items`, {
+    item_id: itemId,
+  });
+  return response.data.data;
+};
+
+export const removeBookingItem = async (bookingId: number, itemId: number): Promise<Booking> => {
+  const response = await apiClient.delete<ApiEnvelope<Booking>>(`/api/admin/bookings/${bookingId}/items/${itemId}`);
+  return response.data.data;
+};

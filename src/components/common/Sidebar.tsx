@@ -9,14 +9,16 @@ import {
   Users,
   User,
   ShieldCheck,
+  Package,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
 const Sidebar: React.FC = () => {
   const { user } = useAuth();
-  // User administration is SUPER_ADMIN-only server-side (see UserPolicy) —
-  // VENUE_MANAGER holds no users.* permission, so the nav item would only
-  // ever 403 for them.
+  // User administration and the Items catalog are both SUPER_ADMIN-only
+  // server-side (see UserPolicy / ItemPolicy — items.* is deliberately not
+  // granted to VENUE_MANAGER since it's one catalog shared by every venue).
+  // Neither nav item would ever do anything but 403 for anyone else.
   const isSuperAdmin = Boolean(user?.roles?.includes('SUPER_ADMIN'));
 
   const navItems = [
@@ -25,6 +27,7 @@ const Sidebar: React.FC = () => {
     { label: 'Fields', path: '/fields', icon: Goal },
     { label: 'Bookings', path: '/bookings', icon: Calendar },
     { label: 'Schedule', path: '/schedule', icon: Clock },
+    ...(isSuperAdmin ? [{ label: 'Items', path: '/items', icon: Package }] : []),
     ...(isSuperAdmin ? [{ label: 'Users', path: '/users', icon: Users }] : []),
     { label: 'Profile', path: '/profile', icon: User },
   ];
