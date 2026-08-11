@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Check, X as XIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Check, X as XIcon, Eye } from 'lucide-react';
 import { cancelBooking, confirmBooking, createBooking, listBookings } from '../api/bookings';
 import { listVenues } from '../api/venues';
 import { listFields } from '../api/fields';
@@ -36,6 +37,7 @@ const EMPTY_CREATE: CreateBookingData = {
 };
 
 const Bookings: React.FC = () => {
+  const navigate = useNavigate();
   const { showToast } = useNotification();
   const [result, setResult] = useState<PaginatedEnvelope<Booking> | null>(null);
   const [venues, setVenues] = useState<Venue[]>([]);
@@ -297,6 +299,13 @@ const Bookings: React.FC = () => {
                   </td>
                   <td>
                     <div className="row-actions">
+                      <button
+                        className="icon-btn"
+                        onClick={() => navigate(`/bookings/${booking.id}`)}
+                        title="View details"
+                      >
+                        <Eye size={16} />
+                      </button>
                       {booking.status === 'PENDING' && (
                         <button className="icon-btn" onClick={() => handleConfirm(booking)} title="Confirm">
                           <Check size={16} />

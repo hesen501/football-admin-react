@@ -11,6 +11,17 @@ export type BookingSource = 'ADMIN_PANEL' | 'CUSTOMER_APP';
 export const BOOKING_STATUSES: BookingStatus[] = ['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED'];
 export const PAYMENT_STATUSES: PaymentStatus[] = ['PENDING', 'PAID', 'FAILED', 'REFUNDED'];
 
+// One line item on a booking. `id` here is the catalog Item's id (not this
+// booking_items row's own id) — matches AddBookingItemRequest's item_id and
+// the {item} route param on the remove endpoint. See BookingItemResource.
+export interface BookingItem {
+  id: number;
+  name: string;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+}
+
 export interface Booking {
   id: number;
   user?: User;
@@ -20,6 +31,11 @@ export interface Booking {
   end_time: string;
   duration_minutes: number;
   hourly_price: number;
+  // base_price: the field-booking amount alone. total_price below is
+  // base_price + items_total (see Booking::grandTotal() on the backend).
+  base_price: number;
+  items: BookingItem[];
+  items_total: number;
   total_price: number;
   commission_rate: number;
   commission_amount: number;
