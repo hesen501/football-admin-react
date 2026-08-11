@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Search, Pencil, Trash2, MapPin } from 'lucide-react';
+import { Plus, Search, Pencil, Trash2, MapPin, Clock } from 'lucide-react';
 import { createVenue, deleteVenue, listVenues, updateVenue } from '../api/venues';
-import { Venue, VenueFormData, VenueStatus, VENUE_STATUSES } from '../types/venue';
+import { Venue, VenueFormData, VenueStatus, VenueWorkingHour, VENUE_STATUSES } from '../types/venue';
 import { PaginatedEnvelope } from '../types/api';
 import { useNotification } from '../hooks/useNotification';
 import { getErrorMessage } from '../utils/errors';
 import Modal from '../components/common/Modal';
 import Pagination from '../components/common/Pagination';
 import StatusBadge from '../components/common/StatusBadge';
+import WorkingHoursModal from '../components/venues/WorkingHoursModal';
 
 const EMPTY_FORM: VenueFormData = {
   name: '',
@@ -31,6 +32,8 @@ const Venues: React.FC = () => {
   const [editing, setEditing] = useState<Venue | null>(null);
   const [form, setForm] = useState<VenueFormData>(EMPTY_FORM);
   const [isSaving, setIsSaving] = useState(false);
+
+  const [hoursVenue, setHoursVenue] = useState<Venue | null>(null);
 
   const load = async () => {
     setIsLoading(true);
@@ -98,6 +101,14 @@ const Venues: React.FC = () => {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleWorkingHoursSaved = (venueId: number, hours: VenueWorkingHour[]) => {
+    setResult((prev) =>
+      prev
+        ? { ...prev, data: prev.data.map((v) => (v.id === venueId ? { ...v, working_hours: hours } : v)) }
+        : prev
+    );
   };
 
   const handleDelete = async (venue: Venue) => {
@@ -199,6 +210,9 @@ const Venues: React.FC = () => {
                   </td>
                   <td>
                     <div className="row-actions">
+                      <button className="icon-btn" onClick={() => setHoursVenue(venue)} title="Working Hours">
+                        <Clock size={16} />
+                      </button>
                       <button className="icon-btn" onClick={() => openEdit(venue)} title="Edit">
                         <Pencil size={16} />
                       </button>
@@ -316,6 +330,14 @@ const Venues: React.FC = () => {
             </div>
           </form>
         </Modal>
+      )}
+
+      {hoursVenue && (
+        <WorkingHoursModal
+          venue={hoursVenue}
+          onClose={() => setHoursVenue(null)}
+          onSaved={(hours) => handleWorkingHoursSaved(hoursVenue.id, hours)}
+        />
       )}
     </div>
   );
