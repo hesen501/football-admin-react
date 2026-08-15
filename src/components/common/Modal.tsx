@@ -23,7 +23,7 @@ const Modal: React.FC<ModalProps> = ({ title, onClose, children, footer, width =
       <div className="modal-panel" style={{ maxWidth: width }} onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3>{title}</h3>
-          <button type="button" className="modal-close" onClick={onClose} aria-label="Close">
+          <button type="button" className="modal-close" onClick={onClose} aria-label="Bağla">
             <X size={18} />
           </button>
         </div>

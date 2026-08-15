@@ -63,14 +63,14 @@ describe('Items page', () => {
     renderWithNotifications(<Items />);
     await screen.findByText('Water Bottle');
 
-    await user.click(screen.getByRole('button', { name: /new item/i }));
-    await user.type(screen.getByLabelText(/name/i), 'Gloves');
+    await user.click(screen.getByRole('button', { name: /yeni məhsul/i }));
+    await user.type(screen.getByLabelText(/^ad$/i), 'Gloves');
 
-    const priceInput = screen.getByLabelText(/price/i);
+    const priceInput = screen.getByLabelText(/^qiymət$/i);
     await user.clear(priceInput);
     await user.type(priceInput, '3');
 
-    await user.click(screen.getByRole('button', { name: /create item/i }));
+    await user.click(screen.getByRole('button', { name: /məhsul yarat/i }));
 
     await waitFor(() => expect(mockedItemsApi.createItem).toHaveBeenCalledTimes(1));
     const payload = mockedItemsApi.createItem.mock.calls[0][0];
@@ -89,11 +89,11 @@ describe('Items page', () => {
     renderWithNotifications(<Items />);
     await screen.findByText('Water Bottle');
 
-    await user.click(screen.getAllByTitle('Edit')[0]);
-    const priceInput = await screen.findByLabelText(/price/i);
+    await user.click(screen.getAllByTitle('Redaktə et')[0]);
+    const priceInput = await screen.findByLabelText(/^qiymət$/i);
     await user.clear(priceInput);
     await user.type(priceInput, '1.5');
-    await user.click(screen.getByRole('button', { name: /save changes/i }));
+    await user.click(screen.getByRole('button', { name: /dəyişiklikləri yadda saxla/i }));
 
     await waitFor(() =>
       expect(mockedItemsApi.updateItem).toHaveBeenCalledWith(1, { name: 'Water Bottle', price: 1.5, status: 'ACTIVE' })
@@ -109,13 +109,13 @@ describe('Items page', () => {
     await screen.findByText('Water Bottle');
 
     // Row-scoped: after the first toggle, Water Bottle's own button also
-    // becomes "Activate", so an unscoped query would then match two rows.
+    // becomes "Aktivləşdir", so an unscoped query would then match two rows.
     const waterBottleRow = screen.getByText('Water Bottle').closest('tr') as HTMLElement;
-    await user.click(within(waterBottleRow).getByTitle('Deactivate'));
+    await user.click(within(waterBottleRow).getByTitle('Deaktiv et'));
     await waitFor(() => expect(mockedItemsApi.deactivateItem).toHaveBeenCalledWith(1));
 
     const socksRow = screen.getByText('Socks').closest('tr') as HTMLElement;
-    await user.click(within(socksRow).getByTitle('Activate'));
+    await user.click(within(socksRow).getByTitle('Aktivləşdir'));
     await waitFor(() => expect(mockedItemsApi.activateItem).toHaveBeenCalledWith(2));
   });
 

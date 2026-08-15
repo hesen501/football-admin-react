@@ -27,17 +27,17 @@ const Login: React.FC = () => {
     setErrorMessage('');
 
     if (!email.trim() || !password.trim()) {
-      setErrorMessage('Please fill in both Email and Password');
+      setErrorMessage('Zəhmət olmasa E-poçt və Şifrəni doldurun');
       return;
     }
 
     setIsSubmitting(true);
     try {
       await login({ email: email.trim(), password });
-      showToast('Admin login successful', 'success');
+      showToast('Admin girişi uğurlu oldu', 'success');
       navigate(from, { replace: true });
     } catch (err: unknown) {
-      const msg = getErrorMessage(err, 'Invalid admin credentials');
+      const msg = getErrorMessage(err, 'Admin məlumatları yanlışdır');
       setErrorMessage(msg);
       showToast(msg, 'error');
     } finally {
@@ -55,9 +55,9 @@ const Login: React.FC = () => {
           >
             <ShieldCheck size={32} />
           </div>
-          <h2 style={{ fontSize: '1.6rem', fontWeight: 700, color: 'var(--text-main)' }}>Admin Portal</h2>
+          <h2 style={{ fontSize: '1.6rem', fontWeight: 700, color: 'var(--text-main)' }}>Admin Portalı</h2>
           <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginTop: '6px' }}>
-            Sign in to access your football venue administration panel
+            Futbol məkanları idarəetmə panelinə daxil olmaq üçün giriş edin
           </p>
         </div>
 
@@ -80,7 +80,7 @@ const Login: React.FC = () => {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label" htmlFor="email-input">
-              Email
+              E-poçt
             </label>
             <div style={{ position: 'relative' }}>
               <Mail
@@ -109,7 +109,7 @@ const Login: React.FC = () => {
 
           <div className="form-group" style={{ marginBottom: '28px' }}>
             <label className="form-label" htmlFor="password-input">
-              Password
+              Şifrə
             </label>
             <div style={{ position: 'relative' }}>
               <Lock
@@ -146,7 +146,7 @@ const Login: React.FC = () => {
               <span className="spinner spinner-sm" />
             ) : (
               <>
-                <span>Sign In</span>
+                <span>Daxil ol</span>
                 <ArrowRight size={18} />
               </>
             )}

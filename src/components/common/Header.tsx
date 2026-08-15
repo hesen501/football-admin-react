@@ -9,7 +9,7 @@ const Header: React.FC = () => {
   return (
     <header className="admin-header">
       <div className="header-left">
-        <h1 className="header-title">Football Venue Management</h1>
+        <h1 className="header-title">Futbol Məkanlarının İdarəetməsi</h1>
       </div>
       <div className="header-right">
         <div className="user-badge" title={user?.email}>
@@ -18,9 +18,9 @@ const Header: React.FC = () => {
           </div>
           <span>{displayName}</span>
         </div>
-        <button className="logout-btn" onClick={logout} title="Sign Out">
+        <button className="logout-btn" onClick={logout} title="Hesabdan çıx">
           <LogOut size={16} />
-          <span>Logout</span>
+          <span>Çıxış</span>
         </button>
       </div>
     </header>

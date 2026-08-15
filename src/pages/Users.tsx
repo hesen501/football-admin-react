@@ -45,7 +45,7 @@ const Users: React.FC = () => {
       });
       setResult(data);
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to load users'), 'error');
+      showToast(getErrorMessage(err, 'İstifadəçilər yüklənə bilmədi'), 'error');
     } finally {
       setIsLoading(false);
     }
@@ -87,28 +87,28 @@ const Users: React.FC = () => {
       if (editing) {
         const { password, ...rest } = form;
         await updateUser(editing.id, password ? form : rest);
-        showToast('User updated', 'success');
+        showToast('İstifadəçi yeniləndi', 'success');
       } else {
         await createUser(form);
-        showToast('User created', 'success');
+        showToast('İstifadəçi yaradıldı', 'success');
       }
       setModalOpen(false);
       load();
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to save user'), 'error');
+      showToast(getErrorMessage(err, 'İstifadəçi yadda saxlanıla bilmədi'), 'error');
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleDelete = async (user: User) => {
-    if (!window.confirm(`Delete user "${user.name}"? This cannot be undone.`)) return;
+    if (!window.confirm(`"${user.name}" istifadəçisini silmək istəyirsiniz? Bu geri qaytarıla bilməz.`)) return;
     try {
       await deleteUser(user.id);
-      showToast('User deleted', 'success');
+      showToast('İstifadəçi silindi', 'success');
       load();
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to delete user'), 'error');
+      showToast(getErrorMessage(err, 'İstifadəçi silinə bilmədi'), 'error');
     }
   };
 
@@ -116,12 +116,12 @@ const Users: React.FC = () => {
     <div className="page-card">
       <div className="page-header">
         <div>
-          <h2 className="page-title">Users</h2>
-          <p className="page-subtitle">Manage platform users, roles, and account statuses</p>
+          <h2 className="page-title">İstifadəçilər</h2>
+          <p className="page-subtitle">Platform istifadəçilərini, rolları və hesab statuslarını idarə edin</p>
         </div>
         <button className="btn btn-primary" onClick={openCreate}>
           <Plus size={18} />
-          <span>New User</span>
+          <span>Yeni İstifadəçi</span>
         </button>
       </div>
 
@@ -130,7 +130,7 @@ const Users: React.FC = () => {
           <Search size={16} />
           <input
             className="form-input"
-            placeholder="Search by name or email…"
+            placeholder="Ad və ya e-poçt üzrə axtarın…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -143,7 +143,7 @@ const Users: React.FC = () => {
             setPage(1);
           }}
         >
-          <option value="">All roles</option>
+          <option value="">Bütün rollar</option>
           {ROLES.map((r) => (
             <option key={r} value={r}>
               {r}
@@ -158,7 +158,7 @@ const Users: React.FC = () => {
             setPage(1);
           }}
         >
-          <option value="">All statuses</option>
+          <option value="">Bütün statuslar</option>
           {USER_STATUSES.map((s) => (
             <option key={s} value={s}>
               {s}
@@ -166,7 +166,7 @@ const Users: React.FC = () => {
           ))}
         </select>
         <button type="submit" className="btn btn-secondary btn-sm">
-          Search
+          Axtar
         </button>
       </form>
 
@@ -174,10 +174,10 @@ const Users: React.FC = () => {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Role</th>
+              <th>Ad</th>
+              <th>E-poçt</th>
+              <th>Telefon</th>
+              <th>Rol</th>
               <th>Status</th>
               <th />
             </tr>
@@ -192,7 +192,7 @@ const Users: React.FC = () => {
             ) : !result || result.data.length === 0 ? (
               <tr>
                 <td colSpan={6} className="table-empty">
-                  No users found
+                  Heç bir istifadəçi tapılmadı
                 </td>
               </tr>
             ) : (
@@ -212,13 +212,13 @@ const Users: React.FC = () => {
                   </td>
                   <td>
                     <div className="row-actions">
-                      <button className="icon-btn" onClick={() => openEdit(user)} title="Edit">
+                      <button className="icon-btn" onClick={() => openEdit(user)} title="Redaktə et">
                         <Pencil size={16} />
                       </button>
                       <button
                         className="icon-btn danger"
                         onClick={() => handleDelete(user)}
-                        title={user.id === currentUser?.id ? "You can't delete your own account" : 'Delete'}
+                        title={user.id === currentUser?.id ? 'Öz hesabınızı silə bilməzsiniz' : 'Sil'}
                         disabled={user.id === currentUser?.id}
                       >
                         <Trash2 size={16} />
@@ -243,15 +243,15 @@ const Users: React.FC = () => {
 
       {modalOpen && (
         <Modal
-          title={editing ? 'Edit User' : 'New User'}
+          title={editing ? 'İstifadəçini Redaktə Et' : 'Yeni İstifadəçi'}
           onClose={() => setModalOpen(false)}
           footer={
             <>
               <button className="btn btn-secondary" onClick={() => setModalOpen(false)}>
-                Cancel
+                Ləğv et
               </button>
               <button className="btn btn-primary" onClick={handleSave} disabled={isSaving}>
-                {isSaving ? <span className="spinner spinner-sm" /> : editing ? 'Save Changes' : 'Create User'}
+                {isSaving ? <span className="spinner spinner-sm" /> : editing ? 'Dəyişiklikləri Yadda Saxla' : 'İstifadəçi Yarat'}
               </button>
             </>
           }
@@ -263,7 +263,7 @@ const Users: React.FC = () => {
             }}
           >
             <div className="form-group">
-              <label className="form-label">Name</label>
+              <label className="form-label">Ad</label>
               <input
                 className="form-input"
                 required
@@ -273,7 +273,7 @@ const Users: React.FC = () => {
             </div>
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">Email</label>
+                <label className="form-label">E-poçt</label>
                 <input
                   type="email"
                   className="form-input"
@@ -283,7 +283,7 @@ const Users: React.FC = () => {
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">Phone</label>
+                <label className="form-label">Telefon</label>
                 <input
                   className="form-input"
                   value={form.phone}
@@ -293,7 +293,7 @@ const Users: React.FC = () => {
             </div>
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">Role</label>
+                <label className="form-label">Rol</label>
                 <select
                   className="form-input"
                   value={form.role}
@@ -322,7 +322,7 @@ const Users: React.FC = () => {
               </div>
             </div>
             <div className="form-group">
-              <label className="form-label">Password {editing && <span className="form-hint">(leave blank to keep unchanged)</span>}</label>
+              <label className="form-label">Şifrə {editing && <span className="form-hint">(dəyişməmək üçün boş buraxın)</span>}</label>
               <input
                 type="password"
                 className="form-input"

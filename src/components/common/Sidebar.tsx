@@ -22,14 +22,14 @@ const Sidebar: React.FC = () => {
   const isSuperAdmin = Boolean(user?.roles?.includes('SUPER_ADMIN'));
 
   const navItems = [
-    { label: 'Dashboard', path: '/', icon: LayoutDashboard },
-    { label: 'Venues', path: '/venues', icon: MapPin },
-    { label: 'Fields', path: '/fields', icon: Goal },
-    { label: 'Bookings', path: '/bookings', icon: Calendar },
-    { label: 'Schedule', path: '/schedule', icon: Clock },
-    ...(isSuperAdmin ? [{ label: 'Items', path: '/items', icon: Package }] : []),
-    ...(isSuperAdmin ? [{ label: 'Users', path: '/users', icon: Users }] : []),
-    { label: 'Profile', path: '/profile', icon: User },
+    { label: 'İdarə Paneli', path: '/', icon: LayoutDashboard },
+    { label: 'Məkanlar', path: '/venues', icon: MapPin },
+    { label: 'Sahələr', path: '/fields', icon: Goal },
+    { label: 'Rezervasiyalar', path: '/bookings', icon: Calendar },
+    { label: 'Cədvəl', path: '/schedule', icon: Clock },
+    ...(isSuperAdmin ? [{ label: 'Məhsullar', path: '/items', icon: Package }] : []),
+    ...(isSuperAdmin ? [{ label: 'İstifadəçilər', path: '/users', icon: Users }] : []),
+    { label: 'Profil', path: '/profile', icon: User },
   ];
 
   return (
@@ -38,7 +38,7 @@ const Sidebar: React.FC = () => {
         <div className="logo-icon">
           <ShieldCheck size={22} />
         </div>
-        <span className="logo-title">Venue Admin</span>
+        <span className="logo-title">Məkan Admin</span>
       </div>
       <nav className="sidebar-nav">
         {navItems.map((item) => {

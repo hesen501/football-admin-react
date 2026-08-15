@@ -33,7 +33,7 @@ const Dashboard: React.FC = () => {
           setRecentBookings(bookingsResult);
         }
       } catch (err) {
-        if (!cancelled) showToast(getErrorMessage(err, 'Failed to load dashboard'), 'error');
+        if (!cancelled) showToast(getErrorMessage(err, 'İdarə paneli yüklənə bilmədi'), 'error');
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -50,8 +50,8 @@ const Dashboard: React.FC = () => {
     <div>
       <div className="page-header">
         <div>
-          <h2 className="page-title">Dashboard Overview</h2>
-          <p className="page-subtitle">Welcome to the Football Venue Management System</p>
+          <h2 className="page-title">Ümumi Baxış</h2>
+          <p className="page-subtitle">Futbol Məkanları İdarəetmə Sisteminə xoş gəlmisiniz</p>
         </div>
       </div>
 
@@ -63,19 +63,19 @@ const Dashboard: React.FC = () => {
         <>
           <div className="stat-grid">
             {stats.total_users !== null && (
-              <StatCard icon={<Users size={20} />} label="Total Users" value={stats.total_users} />
+              <StatCard icon={<Users size={20} />} label="Ümumi İstifadəçilər" value={stats.total_users} />
             )}
-            <StatCard icon={<MapPin size={20} />} label="Total Venues" value={stats.total_venues} />
-            <StatCard icon={<Goal size={20} />} label="Total Fields" value={stats.total_fields} />
-            <StatCard icon={<CalendarCheck size={20} />} label="Total Bookings" value={stats.total_bookings} />
+            <StatCard icon={<MapPin size={20} />} label="Ümumi Məkanlar" value={stats.total_venues} />
+            <StatCard icon={<Goal size={20} />} label="Ümumi Sahələr" value={stats.total_fields} />
+            <StatCard icon={<CalendarCheck size={20} />} label="Ümumi Rezervasiyalar" value={stats.total_bookings} />
             <StatCard
               icon={<DollarSign size={20} />}
-              label="Total Revenue"
+              label="Ümumi Gəlir"
               value={currency(stats.total_revenue)}
             />
             <StatCard
               icon={<PiggyBank size={20} />}
-              label="Platform Commission"
+              label="Platforma Komissiyası"
               value={currency(stats.total_commission)}
             />
           </div>
@@ -84,7 +84,7 @@ const Dashboard: React.FC = () => {
             <div className="page-header">
               <div>
                 <h2 className="page-title" style={{ fontSize: '1.15rem' }}>
-                  Booking Status Breakdown
+                  Rezervasiya Statuslarının Bölgüsü
                 </h2>
               </div>
             </div>
@@ -113,7 +113,7 @@ const Dashboard: React.FC = () => {
             <div className="page-header">
               <div>
                 <h2 className="page-title" style={{ fontSize: '1.15rem' }}>
-                  Recent Bookings
+                  Son Rezervasiyalar
                 </h2>
               </div>
             </div>
@@ -122,19 +122,19 @@ const Dashboard: React.FC = () => {
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>Customer</th>
-                    <th>Field / Venue</th>
-                    <th>Start Time</th>
+                    <th>Müştəri</th>
+                    <th>Sahə / Məkan</th>
+                    <th>Başlama Vaxtı</th>
                     <th>Status</th>
-                    <th>Payment</th>
-                    <th>Total</th>
+                    <th>Ödəniş</th>
+                    <th>Ümumi</th>
                   </tr>
                 </thead>
                 <tbody>
                   {recentBookings.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="table-empty">
-                        No recent bookings
+                        Son rezervasiya yoxdur
                       </td>
                     </tr>
                   ) : (

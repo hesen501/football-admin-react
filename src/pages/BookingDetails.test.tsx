@@ -113,10 +113,10 @@ describe('BookingDetails page', () => {
     );
 
     renderPage();
-    await screen.findByText('No items added yet.');
+    await screen.findByText('Hələ heç bir məhsul əlavə edilməyib.');
 
     await user.selectOptions(screen.getByRole('combobox'), '1');
-    await user.click(screen.getByRole('button', { name: /^add$/i }));
+    await user.click(screen.getByRole('button', { name: /^əlavə et$/i }));
 
     await waitFor(() => expect(mockedBookingsApi.addBookingItem).toHaveBeenCalledWith(10, 1));
     expect(await screen.findByText('Water Bottle')).toBeInTheDocument();
@@ -143,7 +143,7 @@ describe('BookingDetails page', () => {
     renderPage();
     await screen.findByText('Water Bottle');
 
-    await user.click(screen.getByRole('button', { name: /add one more water bottle/i }));
+    await user.click(screen.getByRole('button', { name: /water bottle.*əlavə et/i }));
 
     await waitFor(() => expect(mockedBookingsApi.addBookingItem).toHaveBeenCalledWith(10, 1));
     expect(await screen.findByText('2 × $1.00')).toBeInTheDocument();
@@ -169,7 +169,7 @@ describe('BookingDetails page', () => {
     renderPage();
     await screen.findByText('Water Bottle');
 
-    await user.click(screen.getByRole('button', { name: /remove one water bottle/i }));
+    await user.click(screen.getByRole('button', { name: /water bottle.*bir ədəd sil/i }));
 
     await waitFor(() => expect(mockedBookingsApi.removeBookingItem).toHaveBeenCalledWith(10, 1));
     expect(await screen.findByText('1 × $1.00')).toBeInTheDocument();
@@ -189,10 +189,10 @@ describe('BookingDetails page', () => {
     renderPage();
     await screen.findByText('Water Bottle');
 
-    await user.click(screen.getByRole('button', { name: /remove one water bottle/i }));
+    await user.click(screen.getByRole('button', { name: /water bottle.*bir ədəd sil/i }));
 
     await waitFor(() => expect(mockedBookingsApi.removeBookingItem).toHaveBeenCalledWith(10, 1));
-    expect(await screen.findByText('No items added yet.')).toBeInTheDocument();
+    expect(await screen.findByText('Hələ heç bir məhsul əlavə edilməyib.')).toBeInTheDocument();
     expect(screen.queryByText('Water Bottle')).not.toBeInTheDocument();
   });
 
@@ -204,14 +204,14 @@ describe('BookingDetails page', () => {
     });
 
     renderPage();
-    await screen.findByText('No items added yet.');
+    await screen.findByText('Hələ heç bir məhsul əlavə edilməyib.');
 
     await user.selectOptions(screen.getByRole('combobox'), '1');
-    await user.click(screen.getByRole('button', { name: /^add$/i }));
+    await user.click(screen.getByRole('button', { name: /^əlavə et$/i }));
 
     expect(await screen.findByText('This item is not available.')).toBeInTheDocument();
     // The failed request must not have mutated local state into a fake success.
-    expect(screen.getByText('No items added yet.')).toBeInTheDocument();
+    expect(screen.getByText('Hələ heç bir məhsul əlavə edilməyib.')).toBeInTheDocument();
   });
 
   it('hides the add-item controls and disables the stepper once the booking can no longer be modified', async () => {
@@ -226,7 +226,7 @@ describe('BookingDetails page', () => {
     await screen.findByText('Water Bottle');
 
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /remove one water bottle/i })).toBeDisabled();
-    expect(screen.getByRole('button', { name: /add one more water bottle/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /water bottle.*bir ədəd sil/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /water bottle.*əlavə et/i })).toBeDisabled();
   });
 });

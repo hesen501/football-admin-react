@@ -45,7 +45,7 @@ const Venues: React.FC = () => {
       });
       setResult(data);
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to load venues'), 'error');
+      showToast(getErrorMessage(err, 'Məkanlar yüklənə bilmədi'), 'error');
     } finally {
       setIsLoading(false);
     }
@@ -89,15 +89,15 @@ const Venues: React.FC = () => {
     try {
       if (editing) {
         await updateVenue(editing.id, form);
-        showToast('Venue updated', 'success');
+        showToast('Məkan yeniləndi', 'success');
       } else {
         await createVenue(form);
-        showToast('Venue created', 'success');
+        showToast('Məkan yaradıldı', 'success');
       }
       setModalOpen(false);
       load();
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to save venue'), 'error');
+      showToast(getErrorMessage(err, 'Məkan yadda saxlanıla bilmədi'), 'error');
     } finally {
       setIsSaving(false);
     }
@@ -112,13 +112,13 @@ const Venues: React.FC = () => {
   };
 
   const handleDelete = async (venue: Venue) => {
-    if (!window.confirm(`Delete venue "${venue.name}"? This cannot be undone.`)) return;
+    if (!window.confirm(`"${venue.name}" məkanını silmək istəyirsiniz? Bu geri qaytarıla bilməz.`)) return;
     try {
       await deleteVenue(venue.id);
-      showToast('Venue deleted', 'success');
+      showToast('Məkan silindi', 'success');
       load();
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to delete venue'), 'error');
+      showToast(getErrorMessage(err, 'Məkan silinə bilmədi'), 'error');
     }
   };
 
@@ -126,12 +126,12 @@ const Venues: React.FC = () => {
     <div className="page-card">
       <div className="page-header">
         <div>
-          <h2 className="page-title">Venues</h2>
-          <p className="page-subtitle">Manage stadium and field venues</p>
+          <h2 className="page-title">Məkanlar</h2>
+          <p className="page-subtitle">Stadion və sahə məkanlarını idarə edin</p>
         </div>
         <button className="btn btn-primary" onClick={openCreate}>
           <Plus size={18} />
-          <span>New Venue</span>
+          <span>Yeni Məkan</span>
         </button>
       </div>
 
@@ -140,7 +140,7 @@ const Venues: React.FC = () => {
           <Search size={16} />
           <input
             className="form-input"
-            placeholder="Search by name, address, city…"
+            placeholder="Ad, ünvan, şəhər üzrə axtarın…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -153,7 +153,7 @@ const Venues: React.FC = () => {
             setPage(1);
           }}
         >
-          <option value="">All statuses</option>
+          <option value="">Bütün statuslar</option>
           {VENUE_STATUSES.map((s) => (
             <option key={s} value={s}>
               {s}
@@ -161,7 +161,7 @@ const Venues: React.FC = () => {
           ))}
         </select>
         <button type="submit" className="btn btn-secondary btn-sm">
-          Search
+          Axtar
         </button>
       </form>
 
@@ -169,9 +169,9 @@ const Venues: React.FC = () => {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>City</th>
-              <th>Contact</th>
+              <th>Ad</th>
+              <th>Şəhər</th>
+              <th>Əlaqə</th>
               <th>Status</th>
               <th />
             </tr>
@@ -186,7 +186,7 @@ const Venues: React.FC = () => {
             ) : !result || result.data.length === 0 ? (
               <tr>
                 <td colSpan={5} className="table-empty">
-                  No venues found
+                  Heç bir məkan tapılmadı
                 </td>
               </tr>
             ) : (
@@ -210,13 +210,13 @@ const Venues: React.FC = () => {
                   </td>
                   <td>
                     <div className="row-actions">
-                      <button className="icon-btn" onClick={() => setHoursVenue(venue)} title="Working Hours">
+                      <button className="icon-btn" onClick={() => setHoursVenue(venue)} title="İş Saatları">
                         <Clock size={16} />
                       </button>
-                      <button className="icon-btn" onClick={() => openEdit(venue)} title="Edit">
+                      <button className="icon-btn" onClick={() => openEdit(venue)} title="Redaktə et">
                         <Pencil size={16} />
                       </button>
-                      <button className="icon-btn danger" onClick={() => handleDelete(venue)} title="Delete">
+                      <button className="icon-btn danger" onClick={() => handleDelete(venue)} title="Sil">
                         <Trash2 size={16} />
                       </button>
                     </div>
@@ -239,15 +239,15 @@ const Venues: React.FC = () => {
 
       {modalOpen && (
         <Modal
-          title={editing ? 'Edit Venue' : 'New Venue'}
+          title={editing ? 'Məkanı Redaktə Et' : 'Yeni Məkan'}
           onClose={() => setModalOpen(false)}
           footer={
             <>
               <button className="btn btn-secondary" onClick={() => setModalOpen(false)}>
-                Cancel
+                Ləğv et
               </button>
               <button className="btn btn-primary" onClick={handleSave} disabled={isSaving}>
-                {isSaving ? <span className="spinner spinner-sm" /> : editing ? 'Save Changes' : 'Create Venue'}
+                {isSaving ? <span className="spinner spinner-sm" /> : editing ? 'Dəyişiklikləri Yadda Saxla' : 'Məkan Yarat'}
               </button>
             </>
           }
@@ -259,7 +259,7 @@ const Venues: React.FC = () => {
             }}
           >
             <div className="form-group">
-              <label className="form-label">Name</label>
+              <label className="form-label">Ad</label>
               <input
                 className="form-input"
                 required
@@ -269,7 +269,7 @@ const Venues: React.FC = () => {
             </div>
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">City</label>
+                <label className="form-label">Şəhər</label>
                 <input
                   className="form-input"
                   required
@@ -293,7 +293,7 @@ const Venues: React.FC = () => {
               </div>
             </div>
             <div className="form-group">
-              <label className="form-label">Address</label>
+              <label className="form-label">Ünvan</label>
               <input
                 className="form-input"
                 required
@@ -303,7 +303,7 @@ const Venues: React.FC = () => {
             </div>
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">Phone</label>
+                <label className="form-label">Telefon</label>
                 <input
                   className="form-input"
                   value={form.phone}
@@ -311,7 +311,7 @@ const Venues: React.FC = () => {
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">Email</label>
+                <label className="form-label">E-poçt</label>
                 <input
                   className="form-input"
                   type="email"
@@ -321,7 +321,7 @@ const Venues: React.FC = () => {
               </div>
             </div>
             <div className="form-group">
-              <label className="form-label">Description</label>
+              <label className="form-label">Təsvir</label>
               <textarea
                 className="form-input"
                 value={form.description}
