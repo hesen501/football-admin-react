@@ -62,10 +62,10 @@ const Bookings: React.FC = () => {
   useEffect(() => {
     listVenues({ per_page: 100 })
       .then((res) => setVenues(res.data))
-      .catch((err) => showToast(getErrorMessage(err, 'Failed to load venues'), 'error'));
+      .catch((err) => showToast(getErrorMessage(err, 'Məkanlar yüklənə bilmədi'), 'error'));
     listUsers({ role: 'CUSTOMER', per_page: 100 })
       .then((res) => setCustomers(res.data))
-      .catch((err) => showToast(getErrorMessage(err, 'Failed to load customers'), 'error'));
+      .catch((err) => showToast(getErrorMessage(err, 'Müştərilər yüklənə bilmədi'), 'error'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -101,7 +101,7 @@ const Bookings: React.FC = () => {
       });
       setResult(data);
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to load bookings'), 'error');
+      showToast(getErrorMessage(err, 'Rezervasiyalar yüklənə bilmədi'), 'error');
     } finally {
       setIsLoading(false);
     }
@@ -120,17 +120,17 @@ const Bookings: React.FC = () => {
 
   const handleSave = async () => {
     if (!form.user_id || !form.field_id || !form.start_time) {
-      showToast('Please fill in customer, field, and start time', 'error');
+      showToast('Zəhmət olmasa müştəri, sahə və başlama vaxtını doldurun', 'error');
       return;
     }
     setIsSaving(true);
     try {
       await createBooking(form);
-      showToast('Booking created', 'success');
+      showToast('Rezervasiya yaradıldı', 'success');
       setModalOpen(false);
       load();
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to create booking'), 'error');
+      showToast(getErrorMessage(err, 'Rezervasiya yaradıla bilmədi'), 'error');
     } finally {
       setIsSaving(false);
     }
@@ -139,21 +139,21 @@ const Bookings: React.FC = () => {
   const handleConfirm = async (booking: Booking) => {
     try {
       await confirmBooking(booking.id);
-      showToast('Booking confirmed', 'success');
+      showToast('Rezervasiya təsdiqləndi', 'success');
       load();
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to confirm booking'), 'error');
+      showToast(getErrorMessage(err, 'Rezervasiya təsdiqlənə bilmədi'), 'error');
     }
   };
 
   const handleCancel = async (booking: Booking) => {
-    const reason = window.prompt('Cancellation reason (optional):') ?? undefined;
+    const reason = window.prompt('Ləğv səbəbi (istəyə bağlı):') ?? undefined;
     try {
       await cancelBooking(booking.id, reason);
-      showToast('Booking cancelled', 'success');
+      showToast('Rezervasiya ləğv edildi', 'success');
       load();
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to cancel booking'), 'error');
+      showToast(getErrorMessage(err, 'Rezervasiya ləğv edilə bilmədi'), 'error');
     }
   };
 
@@ -161,12 +161,12 @@ const Bookings: React.FC = () => {
     <div className="page-card">
       <div className="page-header">
         <div>
-          <h2 className="page-title">Bookings</h2>
-          <p className="page-subtitle">View and manage field reservations</p>
+          <h2 className="page-title">Rezervasiyalar</h2>
+          <p className="page-subtitle">Sahə rezervasiyalarına baxın və idarə edin</p>
         </div>
         <button className="btn btn-primary" onClick={openCreate}>
           <Plus size={18} />
-          <span>New Booking</span>
+          <span>Yeni Rezervasiya</span>
         </button>
       </div>
 
@@ -179,7 +179,7 @@ const Bookings: React.FC = () => {
             setPage(1);
           }}
         >
-          <option value="">All venues</option>
+          <option value="">Bütün məkanlar</option>
           {venues.map((v) => (
             <option key={v.id} value={v.id}>
               {v.name}
@@ -195,7 +195,7 @@ const Bookings: React.FC = () => {
             setPage(1);
           }}
         >
-          <option value="">All fields</option>
+          <option value="">Bütün sahələr</option>
           {fields.map((f) => (
             <option key={f.id} value={f.id}>
               {f.name}
@@ -210,7 +210,7 @@ const Bookings: React.FC = () => {
             setPage(1);
           }}
         >
-          <option value="">All statuses</option>
+          <option value="">Bütün statuslar</option>
           {BOOKING_STATUSES.map((s) => (
             <option key={s} value={s}>
               {s}
@@ -225,7 +225,7 @@ const Bookings: React.FC = () => {
             setPage(1);
           }}
         >
-          <option value="">All payment statuses</option>
+          <option value="">Bütün ödəniş statusları</option>
           {PAYMENT_STATUSES.map((s) => (
             <option key={s} value={s}>
               {s}
@@ -256,12 +256,12 @@ const Bookings: React.FC = () => {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Customer</th>
-              <th>Field / Venue</th>
-              <th>Start → End</th>
-              <th>Total</th>
+              <th>Müştəri</th>
+              <th>Sahə / Məkan</th>
+              <th>Başlanğıc → Bitmə</th>
+              <th>Ümumi</th>
               <th>Status</th>
-              <th>Payment</th>
+              <th>Ödəniş</th>
               <th />
             </tr>
           </thead>
@@ -275,7 +275,7 @@ const Bookings: React.FC = () => {
             ) : !result || result.data.length === 0 ? (
               <tr>
                 <td colSpan={7} className="table-empty">
-                  No bookings found
+                  Heç bir rezervasiya tapılmadı
                 </td>
               </tr>
             ) : (
@@ -302,17 +302,17 @@ const Bookings: React.FC = () => {
                       <button
                         className="icon-btn"
                         onClick={() => navigate(`/bookings/${booking.id}`)}
-                        title="View details"
+                        title="Ətraflı bax"
                       >
                         <Eye size={16} />
                       </button>
                       {booking.status === 'PENDING' && (
-                        <button className="icon-btn" onClick={() => handleConfirm(booking)} title="Confirm">
+                        <button className="icon-btn" onClick={() => handleConfirm(booking)} title="Təsdiqlə">
                           <Check size={16} />
                         </button>
                       )}
                       {booking.status !== 'CANCELLED' && booking.status !== 'COMPLETED' && (
-                        <button className="icon-btn danger" onClick={() => handleCancel(booking)} title="Cancel">
+                        <button className="icon-btn danger" onClick={() => handleCancel(booking)} title="Ləğv et">
                           <XIcon size={16} />
                         </button>
                       )}
@@ -336,15 +336,15 @@ const Bookings: React.FC = () => {
 
       {modalOpen && (
         <Modal
-          title="New Booking"
+          title="Yeni Rezervasiya"
           onClose={() => setModalOpen(false)}
           footer={
             <>
               <button className="btn btn-secondary" onClick={() => setModalOpen(false)}>
-                Cancel
+                Ləğv et
               </button>
               <button className="btn btn-primary" onClick={handleSave} disabled={isSaving}>
-                {isSaving ? <span className="spinner spinner-sm" /> : 'Create Booking'}
+                {isSaving ? <span className="spinner spinner-sm" /> : 'Rezervasiya Yarat'}
               </button>
             </>
           }
@@ -356,14 +356,14 @@ const Bookings: React.FC = () => {
             }}
           >
             <div className="form-group">
-              <label className="form-label">Customer</label>
+              <label className="form-label">Müştəri</label>
               <select
                 className="form-input"
                 required
                 value={form.user_id || ''}
                 onChange={(e) => setForm({ ...form, user_id: Number(e.target.value) })}
               >
-                <option value="">Select a customer…</option>
+                <option value="">Müştəri seçin…</option>
                 {customers.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name} ({c.email})
@@ -373,7 +373,7 @@ const Bookings: React.FC = () => {
             </div>
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">Venue</label>
+                <label className="form-label">Məkan</label>
                 <select
                   className="form-input"
                   value={createVenueId}
@@ -382,7 +382,7 @@ const Bookings: React.FC = () => {
                     setForm({ ...form, field_id: 0 });
                   }}
                 >
-                  <option value="">Select a venue…</option>
+                  <option value="">Məkan seçin…</option>
                   {venues.map((v) => (
                     <option key={v.id} value={v.id}>
                       {v.name}
@@ -391,7 +391,7 @@ const Bookings: React.FC = () => {
                 </select>
               </div>
               <div className="form-group">
-                <label className="form-label">Field</label>
+                <label className="form-label">Sahə</label>
                 <select
                   className="form-input"
                   required
@@ -399,10 +399,10 @@ const Bookings: React.FC = () => {
                   value={form.field_id || ''}
                   onChange={(e) => setForm({ ...form, field_id: Number(e.target.value) })}
                 >
-                  <option value="">Select a field…</option>
+                  <option value="">Sahə seçin…</option>
                   {createFieldOptions.map((f) => (
                     <option key={f.id} value={f.id}>
-                      {f.name} ({currency(f.hourly_price)}/hr)
+                      {f.name} ({currency(f.hourly_price)}/saat)
                     </option>
                   ))}
                 </select>
@@ -410,7 +410,7 @@ const Bookings: React.FC = () => {
             </div>
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">Start Time</label>
+                <label className="form-label">Başlama Vaxtı</label>
                 <input
                   type="datetime-local"
                   className="form-input"
@@ -418,10 +418,10 @@ const Bookings: React.FC = () => {
                   value={form.start_time}
                   onChange={(e) => setForm({ ...form, start_time: e.target.value })}
                 />
-                <span className="form-hint">Must start exactly on the hour (e.g. 18:00)</span>
+                <span className="form-hint">Tam saatda başlamalıdır (məs: 18:00)</span>
               </div>
               <div className="form-group">
-                <label className="form-label">Duration (hours)</label>
+                <label className="form-label">Müddət (saat)</label>
                 <input
                   type="number"
                   min={1}
@@ -434,7 +434,7 @@ const Bookings: React.FC = () => {
               </div>
             </div>
             <div className="form-group">
-              <label className="form-label">Notes</label>
+              <label className="form-label">Qeydlər</label>
               <textarea
                 className="form-input"
                 value={form.notes}

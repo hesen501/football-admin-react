@@ -45,7 +45,7 @@ const Items: React.FC = () => {
       });
       setResult(data);
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to load items'), 'error');
+      showToast(getErrorMessage(err, 'Məhsullar yüklənə bilmədi'), 'error');
     } finally {
       setIsLoading(false);
     }
@@ -79,18 +79,18 @@ const Items: React.FC = () => {
     try {
       if (editing) {
         await updateItem(editing.id, form);
-        showToast('Item updated', 'success');
+        showToast('Məhsul yeniləndi', 'success');
       } else {
         // Only name/price/status are ever sent — there's no way for this
         // form to produce unit_price/total_price/booking_id/quantity, which
         // only ever exist on a booking's own items, not the catalog.
         await createItem(form);
-        showToast('Item created', 'success');
+        showToast('Məhsul yaradıldı', 'success');
       }
       setModalOpen(false);
       load();
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to save item'), 'error');
+      showToast(getErrorMessage(err, 'Məhsul yadda saxlanıla bilmədi'), 'error');
     } finally {
       setIsSaving(false);
     }
@@ -100,10 +100,10 @@ const Items: React.FC = () => {
     setTogglingId(item.id);
     try {
       const updated = item.status === 'ACTIVE' ? await deactivateItem(item.id) : await activateItem(item.id);
-      showToast(`${updated.name} is now ${updated.status === 'ACTIVE' ? 'active' : 'inactive'}`, 'success');
+      showToast(`${updated.name} ${updated.status === 'ACTIVE' ? 'aktivləşdirildi' : 'deaktiv edildi'}`, 'success');
       setResult((prev) => (prev ? { ...prev, data: prev.data.map((i) => (i.id === item.id ? updated : i)) } : prev));
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to update item status'), 'error');
+      showToast(getErrorMessage(err, 'Məhsulun statusu yenilənə bilmədi'), 'error');
     } finally {
       setTogglingId(null);
     }
@@ -113,12 +113,12 @@ const Items: React.FC = () => {
     <div className="page-card">
       <div className="page-header">
         <div>
-          <h2 className="page-title">Items</h2>
-          <p className="page-subtitle">Manage add-ons customers can attach to a booking</p>
+          <h2 className="page-title">Məhsullar</h2>
+          <p className="page-subtitle">Müştərilərin rezervasiyaya əlavə edə biləcəyi məhsulları idarə edin</p>
         </div>
         <button className="btn btn-primary" onClick={openCreate}>
           <Plus size={18} />
-          <span>New Item</span>
+          <span>Yeni Məhsul</span>
         </button>
       </div>
 
@@ -127,7 +127,7 @@ const Items: React.FC = () => {
           <Search size={16} />
           <input
             className="form-input"
-            placeholder="Search by name…"
+            placeholder="Ad üzrə axtarın…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -140,7 +140,7 @@ const Items: React.FC = () => {
             setPage(1);
           }}
         >
-          <option value="">All statuses</option>
+          <option value="">Bütün statuslar</option>
           {ITEM_STATUSES.map((s) => (
             <option key={s} value={s}>
               {s}
@@ -148,7 +148,7 @@ const Items: React.FC = () => {
           ))}
         </select>
         <button type="submit" className="btn btn-secondary btn-sm">
-          Search
+          Axtar
         </button>
       </form>
 
@@ -156,8 +156,8 @@ const Items: React.FC = () => {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Price</th>
+              <th>Ad</th>
+              <th>Qiymət</th>
               <th>Status</th>
               <th />
             </tr>
@@ -168,14 +168,14 @@ const Items: React.FC = () => {
                 <td colSpan={4} className="table-loading">
                   <span className="spinner" />
                   <div className="cell-muted" style={{ marginTop: 8 }}>
-                    Loading items…
+                    Məhsullar yüklənir…
                   </div>
                 </td>
               </tr>
             ) : !result || result.data.length === 0 ? (
               <tr>
                 <td colSpan={4} className="table-empty">
-                  No items found
+                  Heç bir məhsul tapılmadı
                 </td>
               </tr>
             ) : (
@@ -193,14 +193,14 @@ const Items: React.FC = () => {
                   </td>
                   <td>
                     <div className="row-actions">
-                      <button className="icon-btn" onClick={() => openEdit(item)} title="Edit">
+                      <button className="icon-btn" onClick={() => openEdit(item)} title="Redaktə et">
                         <Pencil size={16} />
                       </button>
                       <button
                         className="icon-btn"
                         onClick={() => handleToggleStatus(item)}
                         disabled={togglingId === item.id}
-                        title={item.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
+                        title={item.status === 'ACTIVE' ? 'Deaktiv et' : 'Aktivləşdir'}
                       >
                         {togglingId === item.id ? (
                           <span className="spinner spinner-sm" />
@@ -230,15 +230,15 @@ const Items: React.FC = () => {
 
       {modalOpen && (
         <Modal
-          title={editing ? 'Edit Item' : 'New Item'}
+          title={editing ? 'Məhsulu Redaktə Et' : 'Yeni Məhsul'}
           onClose={() => setModalOpen(false)}
           footer={
             <>
               <button className="btn btn-secondary" onClick={() => setModalOpen(false)}>
-                Cancel
+                Ləğv et
               </button>
               <button className="btn btn-primary" onClick={handleSave} disabled={isSaving}>
-                {isSaving ? <span className="spinner spinner-sm" /> : editing ? 'Save Changes' : 'Create Item'}
+                {isSaving ? <span className="spinner spinner-sm" /> : editing ? 'Dəyişiklikləri Yadda Saxla' : 'Məhsul Yarat'}
               </button>
             </>
           }
@@ -251,7 +251,7 @@ const Items: React.FC = () => {
           >
             <div className="form-group">
               <label className="form-label" htmlFor="item-name">
-                Name
+                Ad
               </label>
               <input
                 id="item-name"
@@ -263,7 +263,7 @@ const Items: React.FC = () => {
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="item-price">
-                Price
+                Qiymət
               </label>
               <input
                 id="item-price"
@@ -282,7 +282,7 @@ const Items: React.FC = () => {
                 checked={form.status !== 'INACTIVE'}
                 onChange={(e) => setForm({ ...form, status: e.target.checked ? 'ACTIVE' : 'INACTIVE' })}
               />
-              Active
+              Aktiv
             </label>
           </form>
         </Modal>

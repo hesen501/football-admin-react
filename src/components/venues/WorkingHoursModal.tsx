@@ -45,7 +45,7 @@ const WorkingHoursModal: React.FC<WorkingHoursModalProps> = ({ venue, onClose, o
     setIsLoading(true);
     getVenueWorkingHours(venue.id)
       .then((hours) => setDays(buildFormState(hours)))
-      .catch((err) => showToast(getErrorMessage(err, 'Failed to load working hours'), 'error'))
+      .catch((err) => showToast(getErrorMessage(err, 'İş saatları yüklənə bilmədi'), 'error'))
       .finally(() => setIsLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [venue.id]);
@@ -66,11 +66,11 @@ const WorkingHoursModal: React.FC<WorkingHoursModalProps> = ({ venue, onClose, o
           closes_at: d.is_closed ? undefined : d.closes_at,
         }))
       );
-      showToast('Working hours updated', 'success');
+      showToast('İş saatları yeniləndi', 'success');
       onSaved(updated);
       onClose();
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to save working hours'), 'error');
+      showToast(getErrorMessage(err, 'İş saatları yadda saxlanıla bilmədi'), 'error');
     } finally {
       setIsSaving(false);
     }
@@ -78,16 +78,16 @@ const WorkingHoursModal: React.FC<WorkingHoursModalProps> = ({ venue, onClose, o
 
   return (
     <Modal
-      title={`Working Hours — ${venue.name}`}
+      title={`İş Saatları — ${venue.name}`}
       onClose={onClose}
       width="640px"
       footer={
         <>
           <button className="btn btn-secondary" onClick={onClose}>
-            Cancel
+            Ləğv et
           </button>
           <button className="btn btn-primary" onClick={handleSave} disabled={isSaving || isLoading}>
-            {isSaving ? <span className="spinner spinner-sm" /> : 'Save Hours'}
+            {isSaving ? <span className="spinner spinner-sm" /> : 'Saatları Yadda Saxla'}
           </button>
         </>
       }
@@ -99,8 +99,8 @@ const WorkingHoursModal: React.FC<WorkingHoursModalProps> = ({ venue, onClose, o
       ) : (
         <>
           <p className="form-hint" style={{ marginBottom: 16 }}>
-            Bookings outside these hours are rejected — closing a day, or narrowing its window, stops customers
-            from booking a field at that venue then (e.g. at midnight).
+            Bu saatlardan kənar rezervasiyalar rədd edilir — bir günü bağlamaq və ya vaxt aralığını daraltmaq
+            müştərilərin həmin məkanda sahə rezervasiya etməsinin qarşısını alır (məs: gecə yarısı).
           </p>
           <div className="working-hours-list">
             {days.map((day) => (
@@ -115,7 +115,7 @@ const WorkingHoursModal: React.FC<WorkingHoursModalProps> = ({ venue, onClose, o
                 </label>
 
                 {day.is_closed ? (
-                  <span className="badge badge-muted working-hours-closed-badge">Closed</span>
+                  <span className="badge badge-muted working-hours-closed-badge">Bağlıdır</span>
                 ) : (
                   <div className="working-hours-times">
                     <input
@@ -125,7 +125,7 @@ const WorkingHoursModal: React.FC<WorkingHoursModalProps> = ({ venue, onClose, o
                       value={day.opens_at}
                       onChange={(e) => updateDay(day.day_of_week, { opens_at: e.target.value })}
                     />
-                    <span className="working-hours-sep">to</span>
+                    <span className="working-hours-sep">–</span>
                     <input
                       type="time"
                       className="form-input"

@@ -13,26 +13,26 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, lastPage, total, o
 
   return (
     <div className="pagination-bar">
-      <span className="pagination-info">{total} total</span>
+      <span className="pagination-info">Cəmi {total}</span>
       <div className="pagination-controls">
         <button
           type="button"
           className="pagination-btn"
           disabled={currentPage <= 1}
           onClick={() => onPageChange(currentPage - 1)}
-          aria-label="Previous page"
+          aria-label="Əvvəlki səhifə"
         >
           <ChevronLeft size={16} />
         </button>
         <span className="pagination-page">
-          Page {currentPage} of {lastPage}
+          Səhifə {currentPage} / {lastPage}
         </span>
         <button
           type="button"
           className="pagination-btn"
           disabled={currentPage >= lastPage}
           onClick={() => onPageChange(currentPage + 1)}
-          aria-label="Next page"
+          aria-label="Növbəti səhifə"
         >
           <ChevronRight size={16} />
         </button>

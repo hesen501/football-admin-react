@@ -37,7 +37,7 @@ const Schedule: React.FC = () => {
   useEffect(() => {
     listVenues({ per_page: 100 })
       .then((res) => setVenues(res.data))
-      .catch((err) => showToast(getErrorMessage(err, 'Failed to load venues'), 'error'));
+      .catch((err) => showToast(getErrorMessage(err, 'Məkanlar yüklənə bilmədi'), 'error'));
     listUsers({ role: 'CUSTOMER', per_page: 100 })
       .then((res) => setCustomers(res.data))
       .catch(() => setCustomers([]));
@@ -65,7 +65,7 @@ const Schedule: React.FC = () => {
       const availability = await getFieldAvailability(Number(fieldId), date);
       setSlots(availability.slots);
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to load availability'), 'error');
+      showToast(getErrorMessage(err, 'Uyğunluq məlumatı yüklənə bilmədi'), 'error');
       setSlots([]);
     } finally {
       setIsLoading(false);
@@ -85,7 +85,7 @@ const Schedule: React.FC = () => {
 
   const handleCreateBooking = async () => {
     if (!bookingSlot || !fieldId || !bookingUserId) {
-      showToast('Please select a customer', 'error');
+      showToast('Zəhmət olmasa müştəri seçin', 'error');
       return;
     }
     setIsSaving(true);
@@ -97,11 +97,11 @@ const Schedule: React.FC = () => {
         duration_hours: 1,
         notes: bookingNotes || undefined,
       });
-      showToast('Booking created', 'success');
+      showToast('Rezervasiya yaradıldı', 'success');
       setBookingSlot(null);
       loadAvailability();
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to create booking'), 'error');
+      showToast(getErrorMessage(err, 'Rezervasiya yaradıla bilmədi'), 'error');
     } finally {
       setIsSaving(false);
     }
@@ -111,8 +111,8 @@ const Schedule: React.FC = () => {
     <div className="page-card">
       <div className="page-header">
         <div>
-          <h2 className="page-title">Booking Schedule</h2>
-          <p className="page-subtitle">View field availability by day and create bookings on open slots</p>
+          <h2 className="page-title">Rezervasiya Cədvəli</h2>
+          <p className="page-subtitle">Sahələrin gün üzrə uyğunluğuna baxın və boş vaxtlara rezervasiya yaradın</p>
         </div>
       </div>
 
@@ -122,7 +122,7 @@ const Schedule: React.FC = () => {
           value={venueId}
           onChange={(e) => setVenueId(e.target.value ? Number(e.target.value) : '')}
         >
-          <option value="">Select a venue…</option>
+          <option value="">Məkan seçin…</option>
           {venues.map((v) => (
             <option key={v.id} value={v.id}>
               {v.name}
@@ -135,7 +135,7 @@ const Schedule: React.FC = () => {
           disabled={!venueId}
           onChange={(e) => setFieldId(e.target.value ? Number(e.target.value) : '')}
         >
-          <option value="">Select a field…</option>
+          <option value="">Sahə seçin…</option>
           {fields.map((f) => (
             <option key={f.id} value={f.id}>
               {f.name}
@@ -146,13 +146,13 @@ const Schedule: React.FC = () => {
       </div>
 
       {!fieldId ? (
-        <div className="table-empty">Select a venue and field to view its schedule</div>
+        <div className="table-empty">Cədvələ baxmaq üçün məkan və sahə seçin</div>
       ) : isLoading ? (
         <div className="table-loading">
           <span className="spinner" />
         </div>
       ) : slots.length === 0 ? (
-        <div className="table-empty">No slots for this date</div>
+        <div className="table-empty">Bu tarix üçün boş vaxt yoxdur</div>
       ) : (
         <div className="slot-grid">
           {slots.map((slot) => (
@@ -160,7 +160,7 @@ const Schedule: React.FC = () => {
               key={slot.start_time}
               className={`slot-cell ${slot.available ? 'available' : 'booked'}`}
               onClick={() => slot.available && openBookingModal(slot)}
-              title={slot.available ? 'Click to book this slot' : 'Already booked'}
+              title={slot.available ? 'Bu vaxtı rezerv etmək üçün klikləyin' : 'Artıq rezerv edilib'}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
                 {slot.available ? <CheckCircle2 size={14} /> : <XCircle size={14} />}
@@ -173,31 +173,31 @@ const Schedule: React.FC = () => {
 
       {bookingSlot && (
         <Modal
-          title="Book This Slot"
+          title="Bu Vaxtı Rezerv Et"
           onClose={() => setBookingSlot(null)}
           footer={
             <>
               <button className="btn btn-secondary" onClick={() => setBookingSlot(null)}>
-                Cancel
+                Ləğv et
               </button>
               <button className="btn btn-primary" onClick={handleCreateBooking} disabled={isSaving}>
-                {isSaving ? <span className="spinner spinner-sm" /> : 'Create Booking'}
+                {isSaving ? <span className="spinner spinner-sm" /> : 'Rezervasiya Yarat'}
               </button>
             </>
           }
         >
           <p style={{ marginBottom: '16px', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-            {formatTime(bookingSlot.start_time)} – {formatTime(bookingSlot.end_time)} on {date}
+            {date} tarixində {formatTime(bookingSlot.start_time)} – {formatTime(bookingSlot.end_time)}
           </p>
           <div className="form-group">
-            <label className="form-label">Customer</label>
+            <label className="form-label">Müştəri</label>
             <select
               className="form-input"
               required
               value={bookingUserId}
               onChange={(e) => setBookingUserId(e.target.value ? Number(e.target.value) : '')}
             >
-              <option value="">Select a customer…</option>
+              <option value="">Müştəri seçin…</option>
               {customers.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name} ({c.email})
@@ -206,7 +206,7 @@ const Schedule: React.FC = () => {
             </select>
           </div>
           <div className="form-group">
-            <label className="form-label">Notes</label>
+            <label className="form-label">Qeydlər</label>
             <textarea
               className="form-input"
               value={bookingNotes}

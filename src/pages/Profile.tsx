@@ -27,9 +27,9 @@ const Profile: React.FC = () => {
       });
       updateUser(updated);
       setPassword('');
-      showToast('Profile updated', 'success');
+      showToast('Profil yeniləndi', 'success');
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to update profile'), 'error');
+      showToast(getErrorMessage(err, 'Profil yenilənə bilmədi'), 'error');
     } finally {
       setIsSaving(false);
     }
@@ -39,8 +39,8 @@ const Profile: React.FC = () => {
     <div className="page-card" style={{ maxWidth: '640px' }}>
       <div className="page-header">
         <div>
-          <h2 className="page-title">Admin Profile</h2>
-          <p className="page-subtitle">Your account details and roles</p>
+          <h2 className="page-title">Admin Profili</h2>
+          <p className="page-subtitle">Hesab məlumatlarınız və rollarınız</p>
         </div>
       </div>
 
@@ -89,12 +89,12 @@ const Profile: React.FC = () => {
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label className="form-label">Name</label>
+          <label className="form-label">Ad</label>
           <input className="form-input" required value={name} onChange={(e) => setName(e.target.value)} />
         </div>
         <div className="form-row">
           <div className="form-group">
-            <label className="form-label">Email</label>
+            <label className="form-label">E-poçt</label>
             <input
               type="email"
               className="form-input"
@@ -104,13 +104,13 @@ const Profile: React.FC = () => {
             />
           </div>
           <div className="form-group">
-            <label className="form-label">Phone</label>
+            <label className="form-label">Telefon</label>
             <input className="form-input" value={phone} onChange={(e) => setPhone(e.target.value)} />
           </div>
         </div>
         <div className="form-group">
           <label className="form-label">
-            New Password <span className="form-hint">(leave blank to keep unchanged)</span>
+            Yeni Şifrə <span className="form-hint">(dəyişməmək üçün boş buraxın)</span>
           </label>
           <input
             type="password"
@@ -121,7 +121,7 @@ const Profile: React.FC = () => {
           />
         </div>
         <button type="submit" className="btn btn-primary" disabled={isSaving}>
-          {isSaving ? <span className="spinner spinner-sm" /> : 'Save Changes'}
+          {isSaving ? <span className="spinner spinner-sm" /> : 'Dəyişiklikləri Yadda Saxla'}
         </button>
       </form>
     </div>

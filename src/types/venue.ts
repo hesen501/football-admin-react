@@ -17,7 +17,15 @@ export interface VenueWorkingHour {
   closes_at: string | null; // "HH:MM", null when is_closed
 }
 
-export const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+export const DAY_NAMES = [
+  'Bazar',
+  'Bazar ertəsi',
+  'Çərşənbə axşamı',
+  'Çərşənbə',
+  'Cümə axşamı',
+  'Cümə',
+  'Şənbə',
+];
 
 // What UpdateVenueWorkingHoursRequest expects for each of the 7 days.
 export interface VenueWorkingHourInput {

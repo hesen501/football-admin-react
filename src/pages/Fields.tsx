@@ -42,7 +42,7 @@ const Fields: React.FC = () => {
   useEffect(() => {
     listVenues({ per_page: 100 })
       .then((res) => setVenues(res.data))
-      .catch((err) => showToast(getErrorMessage(err, 'Failed to load venues'), 'error'));
+      .catch((err) => showToast(getErrorMessage(err, 'Məkanlar yüklənə bilmədi'), 'error'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -57,7 +57,7 @@ const Fields: React.FC = () => {
       });
       setResult(data);
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to load fields'), 'error');
+      showToast(getErrorMessage(err, 'Sahələr yüklənə bilmədi'), 'error');
     } finally {
       setIsLoading(false);
     }
@@ -97,35 +97,35 @@ const Fields: React.FC = () => {
 
   const handleSave = async () => {
     if (!selectedVenueId) {
-      showToast('Please select a venue', 'error');
+      showToast('Zəhmət olmasa məkan seçin', 'error');
       return;
     }
     setIsSaving(true);
     try {
       if (editing) {
         await updateField(editing.id, form);
-        showToast('Field updated', 'success');
+        showToast('Sahə yeniləndi', 'success');
       } else {
         await createField(Number(selectedVenueId), form);
-        showToast('Field created', 'success');
+        showToast('Sahə yaradıldı', 'success');
       }
       setModalOpen(false);
       load();
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to save field'), 'error');
+      showToast(getErrorMessage(err, 'Sahə yadda saxlanıla bilmədi'), 'error');
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleDelete = async (field: Field) => {
-    if (!window.confirm(`Delete field "${field.name}"? This cannot be undone.`)) return;
+    if (!window.confirm(`"${field.name}" sahəsini silmək istəyirsiniz? Bu geri qaytarıla bilməz.`)) return;
     try {
       await deleteField(field.id);
-      showToast('Field deleted', 'success');
+      showToast('Sahə silindi', 'success');
       load();
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to delete field'), 'error');
+      showToast(getErrorMessage(err, 'Sahə silinə bilmədi'), 'error');
     }
   };
 
@@ -133,12 +133,12 @@ const Fields: React.FC = () => {
     <div className="page-card">
       <div className="page-header">
         <div>
-          <h2 className="page-title">Fields</h2>
-          <p className="page-subtitle">Manage individual playing fields within venues</p>
+          <h2 className="page-title">Sahələr</h2>
+          <p className="page-subtitle">Məkanlar daxilindəki oyun sahələrini idarə edin</p>
         </div>
         <button className="btn btn-primary" onClick={openCreate} disabled={venues.length === 0}>
           <Plus size={18} />
-          <span>New Field</span>
+          <span>Yeni Sahə</span>
         </button>
       </div>
 
@@ -147,7 +147,7 @@ const Fields: React.FC = () => {
           <Search size={16} />
           <input
             className="form-input"
-            placeholder="Search by name…"
+            placeholder="Ad üzrə axtarın…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -160,7 +160,7 @@ const Fields: React.FC = () => {
             setPage(1);
           }}
         >
-          <option value="">All venues</option>
+          <option value="">Bütün məkanlar</option>
           {venues.map((v) => (
             <option key={v.id} value={v.id}>
               {v.name}
@@ -175,7 +175,7 @@ const Fields: React.FC = () => {
             setPage(1);
           }}
         >
-          <option value="">All statuses</option>
+          <option value="">Bütün statuslar</option>
           {FIELD_STATUSES.map((s) => (
             <option key={s} value={s}>
               {s}
@@ -183,7 +183,7 @@ const Fields: React.FC = () => {
           ))}
         </select>
         <button type="submit" className="btn btn-secondary btn-sm">
-          Search
+          Axtar
         </button>
       </form>
 
@@ -191,11 +191,11 @@ const Fields: React.FC = () => {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Field</th>
-              <th>Venue</th>
-              <th>Type</th>
-              <th>Capacity</th>
-              <th>Hourly Price</th>
+              <th>Sahə</th>
+              <th>Məkan</th>
+              <th>Növ</th>
+              <th>Tutum</th>
+              <th>Saatlıq Qiymət</th>
               <th>Status</th>
               <th />
             </tr>
@@ -210,7 +210,7 @@ const Fields: React.FC = () => {
             ) : !result || result.data.length === 0 ? (
               <tr>
                 <td colSpan={7} className="table-empty">
-                  No fields found
+                  Heç bir sahə tapılmadı
                 </td>
               </tr>
             ) : (
@@ -233,10 +233,10 @@ const Fields: React.FC = () => {
                   </td>
                   <td>
                     <div className="row-actions">
-                      <button className="icon-btn" onClick={() => openEdit(field)} title="Edit">
+                      <button className="icon-btn" onClick={() => openEdit(field)} title="Redaktə et">
                         <Pencil size={16} />
                       </button>
-                      <button className="icon-btn danger" onClick={() => handleDelete(field)} title="Delete">
+                      <button className="icon-btn danger" onClick={() => handleDelete(field)} title="Sil">
                         <Trash2 size={16} />
                       </button>
                     </div>
@@ -259,15 +259,15 @@ const Fields: React.FC = () => {
 
       {modalOpen && (
         <Modal
-          title={editing ? 'Edit Field' : 'New Field'}
+          title={editing ? 'Sahəni Redaktə Et' : 'Yeni Sahə'}
           onClose={() => setModalOpen(false)}
           footer={
             <>
               <button className="btn btn-secondary" onClick={() => setModalOpen(false)}>
-                Cancel
+                Ləğv et
               </button>
               <button className="btn btn-primary" onClick={handleSave} disabled={isSaving}>
-                {isSaving ? <span className="spinner spinner-sm" /> : editing ? 'Save Changes' : 'Create Field'}
+                {isSaving ? <span className="spinner spinner-sm" /> : editing ? 'Dəyişiklikləri Yadda Saxla' : 'Sahə Yarat'}
               </button>
             </>
           }
@@ -279,7 +279,7 @@ const Fields: React.FC = () => {
             }}
           >
             <div className="form-group">
-              <label className="form-label">Venue</label>
+              <label className="form-label">Məkan</label>
               <select
                 className="form-input"
                 required
@@ -293,10 +293,10 @@ const Fields: React.FC = () => {
                   </option>
                 ))}
               </select>
-              {editing && <span className="form-hint">Venue can&apos;t be changed after creation.</span>}
+              {editing && <span className="form-hint">Yaradıldıqdan sonra məkan dəyişdirilə bilməz.</span>}
             </div>
             <div className="form-group">
-              <label className="form-label">Name</label>
+              <label className="form-label">Ad</label>
               <input
                 className="form-input"
                 required
@@ -306,7 +306,7 @@ const Fields: React.FC = () => {
             </div>
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">Type</label>
+                <label className="form-label">Növ</label>
                 <select
                   className="form-input"
                   value={form.type}
@@ -336,7 +336,7 @@ const Fields: React.FC = () => {
             </div>
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">Capacity</label>
+                <label className="form-label">Tutum</label>
                 <input
                   type="number"
                   min={2}
@@ -348,7 +348,7 @@ const Fields: React.FC = () => {
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">Hourly Price</label>
+                <label className="form-label">Saatlıq Qiymət</label>
                 <input
                   type="number"
                   min={0}
@@ -361,7 +361,7 @@ const Fields: React.FC = () => {
               </div>
             </div>
             <div className="form-group">
-              <label className="form-label">Description</label>
+              <label className="form-label">Təsvir</label>
               <textarea
                 className="form-input"
                 value={form.description}
