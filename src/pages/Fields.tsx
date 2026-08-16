@@ -1,8 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Search, Pencil, Trash2, Goal } from 'lucide-react';
-import { createField, deleteField, listFields, updateField } from '../api/fields';
+import { Plus, Search, Pencil, Trash2, Goal, Image as ImageIcon } from 'lucide-react';
+import {
+  createField,
+  deleteField,
+  deleteFieldImage,
+  listFieldImages,
+  listFields,
+  reorderFieldImages,
+  setFieldCoverImage,
+  updateField,
+  uploadFieldImage,
+} from '../api/fields';
 import { listVenues } from '../api/venues';
 import { Field, FieldFormData, FieldStatus, FieldType, FIELD_STATUSES, FIELD_TYPES } from '../types/field';
+import { Media } from '../types/media';
 import { Venue } from '../types/venue';
 import { PaginatedEnvelope } from '../types/api';
 import { useNotification } from '../hooks/useNotification';
@@ -10,6 +21,7 @@ import { getErrorMessage } from '../utils/errors';
 import Modal from '../components/common/Modal';
 import Pagination from '../components/common/Pagination';
 import StatusBadge from '../components/common/StatusBadge';
+import ImageGalleryModal from '../components/media/ImageGalleryModal';
 
 const EMPTY_FORM: FieldFormData = {
   name: '',
@@ -38,6 +50,8 @@ const Fields: React.FC = () => {
   const [selectedVenueId, setSelectedVenueId] = useState<number | ''>('');
   const [form, setForm] = useState<FieldFormData>(EMPTY_FORM);
   const [isSaving, setIsSaving] = useState(false);
+
+  const [imagesField, setImagesField] = useState<Field | null>(null);
 
   useEffect(() => {
     listVenues({ per_page: 100 })
@@ -116,6 +130,32 @@ const Fields: React.FC = () => {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const openImages = async (field: Field) => {
+    // The field list response already eager-loads images/cover_image (see
+    // FieldService::list) — only falls back to a fetch if that's somehow missing.
+    if (field.images) {
+      setImagesField(field);
+      return;
+    }
+    try {
+      const images = await listFieldImages(field.id);
+      const coverImage = images.find((m) => m.collection === 'cover') ?? null;
+      setImagesField({ ...field, images, cover_image: coverImage });
+    } catch (err) {
+      showToast(getErrorMessage(err, 'Şəkillər yüklənə bilmədi'), 'error');
+    }
+  };
+
+  const handleImagesChanged = (fieldId: number, images: Media[]) => {
+    const coverImage = images.find((m) => m.collection === 'cover') ?? null;
+    setResult((prev) =>
+      prev
+        ? { ...prev, data: prev.data.map((f) => (f.id === fieldId ? { ...f, images, cover_image: coverImage } : f)) }
+        : prev
+    );
+    setImagesField((prev) => (prev && prev.id === fieldId ? { ...prev, images, cover_image: coverImage } : prev));
   };
 
   const handleDelete = async (field: Field) => {
@@ -217,9 +257,18 @@ const Fields: React.FC = () => {
               result.data.map((field) => (
                 <tr key={field.id}>
                   <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}>
-                      <Goal size={15} style={{ color: 'var(--text-muted)' }} />
-                      {field.name}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div className="single-image-preview" style={{ width: 36, height: 36, flexShrink: 0 }}>
+                        {field.cover_image ? (
+                          <img src={field.cover_image.url} alt="" />
+                        ) : (
+                          <ImageIcon size={15} style={{ color: 'var(--text-dim)' }} />
+                        )}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}>
+                        <Goal size={15} style={{ color: 'var(--text-muted)' }} />
+                        {field.name}
+                      </div>
                     </div>
                   </td>
                   <td className="cell-muted">
@@ -233,6 +282,9 @@ const Fields: React.FC = () => {
                   </td>
                   <td>
                     <div className="row-actions">
+                      <button className="icon-btn" onClick={() => openImages(field)} title="Şəkillər">
+                        <ImageIcon size={16} />
+                      </button>
                       <button className="icon-btn" onClick={() => openEdit(field)} title="Redaktə et">
                         <Pencil size={16} />
                       </button>
@@ -370,6 +422,19 @@ const Fields: React.FC = () => {
             </div>
           </form>
         </Modal>
+      )}
+
+      {imagesField && (
+        <ImageGalleryModal
+          title={`Şəkillər — ${imagesField.name}`}
+          images={imagesField.images ?? []}
+          onClose={() => setImagesField(null)}
+          onChange={(images) => handleImagesChanged(imagesField.id, images)}
+          onUpload={(file) => uploadFieldImage(imagesField.id, file)}
+          onDelete={(mediaId) => deleteFieldImage(imagesField.id, mediaId)}
+          onSetCover={(mediaId) => setFieldCoverImage(imagesField.id, mediaId)}
+          onReorder={(order) => reorderFieldImages(imagesField.id, order)}
+        />
       )}
     </div>
   );

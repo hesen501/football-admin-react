@@ -1,3 +1,5 @@
+import { Media } from './media';
+
 // Mirrors App\Modules\User\Http\Resources\UserResource and the
 // StoreUserRequest/UpdateUserRequest validation rules.
 
@@ -14,6 +16,7 @@ export interface User {
   phone: string | null;
   status: UserStatus;
   roles?: string[];
+  avatar?: Media | null;
   email_verified_at: string | null;
   created_at: string;
   updated_at: string;

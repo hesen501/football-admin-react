@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNotification } from '../hooks/useNotification';
 import { getErrorMessage } from '../utils/errors';
-import { updateProfile } from '../api/profile';
+import { deleteMyAvatar, updateProfile, uploadMyAvatar } from '../api/profile';
+import { Media } from '../types/media';
 import { ShieldCheck, Mail, Phone, Shield } from 'lucide-react';
+import SingleImageField from '../components/media/SingleImageField';
 
 const Profile: React.FC = () => {
   const { user, updateUser } = useAuth();
@@ -14,6 +16,10 @@ const Profile: React.FC = () => {
   const [phone, setPhone] = useState(user?.phone || '');
   const [password, setPassword] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+
+  const handleAvatarChanged = (avatar: Media | null) => {
+    if (user) updateUser({ ...user, avatar });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,8 +62,12 @@ const Profile: React.FC = () => {
           marginBottom: '28px',
         }}
       >
-        <div className="logo-icon" style={{ width: '48px', height: '48px', borderRadius: '12px' }}>
-          <ShieldCheck size={26} />
+        <div className="logo-icon" style={{ width: '48px', height: '48px', borderRadius: '12px', overflow: 'hidden' }}>
+          {user?.avatar ? (
+            <img src={user.avatar.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            <ShieldCheck size={26} />
+          )}
         </div>
         <div>
           <div style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-main)' }}>{user?.name}</div>
@@ -86,6 +96,15 @@ const Profile: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <SingleImageField
+        label="Avatar"
+        shape="circle"
+        image={user?.avatar}
+        onUpload={uploadMyAvatar}
+        onDelete={deleteMyAvatar}
+        onChange={handleAvatarChanged}
+      />
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">

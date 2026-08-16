@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Search, Pencil, Trash2, UserCircle } from 'lucide-react';
-import { createUser, deleteUser, listUsers, updateUser } from '../api/users';
+import { createUser, deleteUser, deleteUserAvatar, listUsers, updateUser, uploadUserAvatar } from '../api/users';
 import { Role, User, UserFormData, UserStatus, ROLES, USER_STATUSES } from '../types/user';
+import { Media } from '../types/media';
 import { PaginatedEnvelope } from '../types/api';
 import { useAuth } from '../hooks/useAuth';
 import { useNotification } from '../hooks/useNotification';
@@ -9,6 +10,7 @@ import { getErrorMessage } from '../utils/errors';
 import Modal from '../components/common/Modal';
 import Pagination from '../components/common/Pagination';
 import StatusBadge from '../components/common/StatusBadge';
+import SingleImageField from '../components/media/SingleImageField';
 
 const EMPTY_FORM: UserFormData = {
   name: '',
@@ -99,6 +101,11 @@ const Users: React.FC = () => {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleAvatarChanged = (userId: number, avatar: Media | null) => {
+    setEditing((prev) => (prev && prev.id === userId ? { ...prev, avatar } : prev));
+    setResult((prev) => (prev ? { ...prev, data: prev.data.map((u) => (u.id === userId ? { ...u, avatar } : u)) } : prev));
   };
 
   const handleDelete = async (user: User) => {
@@ -199,9 +206,15 @@ const Users: React.FC = () => {
               result.data.map((user) => (
                 <tr key={user.id}>
                   <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}>
-                      <UserCircle size={16} style={{ color: 'var(--text-muted)' }} />
-                      {user.name}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div className="single-image-preview is-circle" style={{ width: 32, height: 32, flexShrink: 0 }}>
+                        {user.avatar ? (
+                          <img src={user.avatar.url} alt="" />
+                        ) : (
+                          <UserCircle size={16} style={{ color: 'var(--text-dim)' }} />
+                        )}
+                      </div>
+                      <span style={{ fontWeight: 600 }}>{user.name}</span>
                     </div>
                   </td>
                   <td className="cell-muted">{user.email}</td>
@@ -332,6 +345,17 @@ const Users: React.FC = () => {
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
               />
             </div>
+
+            {editing && (
+              <SingleImageField
+                label="Avatar"
+                shape="circle"
+                image={editing.avatar}
+                onUpload={(file) => uploadUserAvatar(editing.id, file)}
+                onDelete={() => deleteUserAvatar(editing.id)}
+                onChange={(avatar) => handleAvatarChanged(editing.id, avatar)}
+              />
+            )}
           </form>
         </Modal>
       )}

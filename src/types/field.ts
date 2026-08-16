@@ -1,3 +1,4 @@
+import { Media } from './media';
 import { Venue } from './venue';
 
 // Mirrors App\Modules\Field\Http\Resources\FieldResource and the
@@ -19,6 +20,8 @@ export interface Field {
   capacity: number;
   hourly_price: number;
   status: FieldStatus;
+  cover_image?: Media | null;
+  images?: Media[];
   created_at: string;
   updated_at: string;
 }

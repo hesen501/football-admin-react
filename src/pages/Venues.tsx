@@ -1,7 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Search, Pencil, Trash2, MapPin, Clock } from 'lucide-react';
-import { createVenue, deleteVenue, listVenues, updateVenue } from '../api/venues';
+import { Plus, Search, Pencil, Trash2, MapPin, Clock, Image as ImageIcon } from 'lucide-react';
+import {
+  createVenue,
+  deleteVenue,
+  deleteVenueImage,
+  listVenueImages,
+  listVenues,
+  reorderVenueImages,
+  setVenueCoverImage,
+  updateVenue,
+  uploadVenueImage,
+} from '../api/venues';
 import { Venue, VenueFormData, VenueStatus, VenueWorkingHour, VENUE_STATUSES } from '../types/venue';
+import { Media } from '../types/media';
 import { PaginatedEnvelope } from '../types/api';
 import { useNotification } from '../hooks/useNotification';
 import { getErrorMessage } from '../utils/errors';
@@ -9,6 +20,7 @@ import Modal from '../components/common/Modal';
 import Pagination from '../components/common/Pagination';
 import StatusBadge from '../components/common/StatusBadge';
 import WorkingHoursModal from '../components/venues/WorkingHoursModal';
+import ImageGalleryModal from '../components/media/ImageGalleryModal';
 
 const EMPTY_FORM: VenueFormData = {
   name: '',
@@ -34,6 +46,7 @@ const Venues: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   const [hoursVenue, setHoursVenue] = useState<Venue | null>(null);
+  const [imagesVenue, setImagesVenue] = useState<Venue | null>(null);
 
   const load = async () => {
     setIsLoading(true);
@@ -109,6 +122,32 @@ const Venues: React.FC = () => {
         ? { ...prev, data: prev.data.map((v) => (v.id === venueId ? { ...v, working_hours: hours } : v)) }
         : prev
     );
+  };
+
+  const openImages = async (venue: Venue) => {
+    // The venue list response already eager-loads images/cover_image (see
+    // VenueService::list) — only falls back to a fetch if that's somehow missing.
+    if (venue.images) {
+      setImagesVenue(venue);
+      return;
+    }
+    try {
+      const images = await listVenueImages(venue.id);
+      const coverImage = images.find((m) => m.collection === 'cover') ?? null;
+      setImagesVenue({ ...venue, images, cover_image: coverImage });
+    } catch (err) {
+      showToast(getErrorMessage(err, 'Şəkillər yüklənə bilmədi'), 'error');
+    }
+  };
+
+  const handleImagesChanged = (venueId: number, images: Media[]) => {
+    const coverImage = images.find((m) => m.collection === 'cover') ?? null;
+    setResult((prev) =>
+      prev
+        ? { ...prev, data: prev.data.map((v) => (v.id === venueId ? { ...v, images, cover_image: coverImage } : v)) }
+        : prev
+    );
+    setImagesVenue((prev) => (prev && prev.id === venueId ? { ...prev, images, cover_image: coverImage } : prev));
   };
 
   const handleDelete = async (venue: Venue) => {
@@ -193,11 +232,22 @@ const Venues: React.FC = () => {
               result.data.map((venue) => (
                 <tr key={venue.id}>
                   <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}>
-                      <MapPin size={15} style={{ color: 'var(--text-muted)' }} />
-                      {venue.name}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div className="single-image-preview" style={{ width: 36, height: 36, flexShrink: 0 }}>
+                        {venue.cover_image ? (
+                          <img src={venue.cover_image.url} alt="" />
+                        ) : (
+                          <ImageIcon size={15} style={{ color: 'var(--text-dim)' }} />
+                        )}
+                      </div>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}>
+                          <MapPin size={15} style={{ color: 'var(--text-muted)' }} />
+                          {venue.name}
+                        </div>
+                        <div className="cell-muted">{venue.address}</div>
+                      </div>
                     </div>
-                    <div className="cell-muted">{venue.address}</div>
                   </td>
                   <td>{venue.city}</td>
                   <td className="cell-muted">
@@ -210,6 +260,9 @@ const Venues: React.FC = () => {
                   </td>
                   <td>
                     <div className="row-actions">
+                      <button className="icon-btn" onClick={() => openImages(venue)} title="Şəkillər">
+                        <ImageIcon size={16} />
+                      </button>
                       <button className="icon-btn" onClick={() => setHoursVenue(venue)} title="İş Saatları">
                         <Clock size={16} />
                       </button>
@@ -337,6 +390,19 @@ const Venues: React.FC = () => {
           venue={hoursVenue}
           onClose={() => setHoursVenue(null)}
           onSaved={(hours) => handleWorkingHoursSaved(hoursVenue.id, hours)}
+        />
+      )}
+
+      {imagesVenue && (
+        <ImageGalleryModal
+          title={`Şəkillər — ${imagesVenue.name}`}
+          images={imagesVenue.images ?? []}
+          onClose={() => setImagesVenue(null)}
+          onChange={(images) => handleImagesChanged(imagesVenue.id, images)}
+          onUpload={(file) => uploadVenueImage(imagesVenue.id, file)}
+          onDelete={(mediaId) => deleteVenueImage(imagesVenue.id, mediaId)}
+          onSetCover={(mediaId) => setVenueCoverImage(imagesVenue.id, mediaId)}
+          onReorder={(order) => reorderVenueImages(imagesVenue.id, order)}
         />
       )}
     </div>
