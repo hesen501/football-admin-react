@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Search, Pencil, Power, PowerOff, Package } from 'lucide-react';
-import { activateItem, createItem, deactivateItem, listItems, updateItem } from '../api/items';
+import { activateItem, createItem, deactivateItem, deleteItemImage, listItems, updateItem, uploadItemImage } from '../api/items';
 import { Item, ItemFormData, ItemStatus, ITEM_STATUSES } from '../types/item';
+import { Media } from '../types/media';
 import { PaginatedEnvelope } from '../types/api';
 import { useNotification } from '../hooks/useNotification';
 import { getErrorMessage } from '../utils/errors';
 import Modal from '../components/common/Modal';
 import Pagination from '../components/common/Pagination';
 import StatusBadge from '../components/common/StatusBadge';
+import SingleImageField from '../components/media/SingleImageField';
 
 const currency = (value: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
@@ -96,6 +98,11 @@ const Items: React.FC = () => {
     }
   };
 
+  const handleImageChanged = (itemId: number, image: Media | null) => {
+    setEditing((prev) => (prev && prev.id === itemId ? { ...prev, image } : prev));
+    setResult((prev) => (prev ? { ...prev, data: prev.data.map((i) => (i.id === itemId ? { ...i, image } : i)) } : prev));
+  };
+
   const handleToggleStatus = async (item: Item) => {
     setTogglingId(item.id);
     try {
@@ -182,9 +189,15 @@ const Items: React.FC = () => {
               result.data.map((item) => (
                 <tr key={item.id}>
                   <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}>
-                      <Package size={15} style={{ color: 'var(--text-muted)' }} />
-                      {item.name}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div className="single-image-preview" style={{ width: 32, height: 32, flexShrink: 0 }}>
+                        {item.image ? (
+                          <img src={item.image.url} alt="" />
+                        ) : (
+                          <Package size={14} style={{ color: 'var(--text-dim)' }} />
+                        )}
+                      </div>
+                      <span style={{ fontWeight: 600 }}>{item.name}</span>
                     </div>
                   </td>
                   <td>{currency(item.price)}</td>
@@ -284,6 +297,16 @@ const Items: React.FC = () => {
               />
               Aktiv
             </label>
+
+            {editing && (
+              <SingleImageField
+                label="Şəkil"
+                image={editing.image}
+                onUpload={(file) => uploadItemImage(editing.id, file)}
+                onDelete={() => deleteItemImage(editing.id)}
+                onChange={(image) => handleImageChanged(editing.id, image)}
+              />
+            )}
           </form>
         </Modal>
       )}

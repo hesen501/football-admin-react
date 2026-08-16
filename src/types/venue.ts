@@ -1,3 +1,4 @@
+import { Media } from './media';
 import { User } from './user';
 
 // Mirrors App\Modules\Venue\Http\Resources\VenueResource and the
@@ -49,6 +50,11 @@ export interface Venue {
   status: VenueStatus;
   managers?: User[];
   working_hours?: VenueWorkingHour[];
+  // cover_image is just a pointer at whichever of `images` is currently the
+  // cover (see App\Shared\Concerns\HasMedia on the backend) — `images`
+  // includes it too.
+  cover_image?: Media | null;
+  images?: Media[];
   created_at: string;
   updated_at: string;
 }

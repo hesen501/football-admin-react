@@ -3,6 +3,8 @@
 // global catalog (no venue_id) — see ItemPolicy for why only SUPER_ADMIN
 // manages them.
 
+import { Media } from './media';
+
 export type ItemStatus = 'ACTIVE' | 'INACTIVE';
 
 export const ITEM_STATUSES: ItemStatus[] = ['ACTIVE', 'INACTIVE'];
@@ -12,6 +14,7 @@ export interface Item {
   name: string;
   price: number;
   status: ItemStatus;
+  image?: Media | null;
   created_at: string;
   updated_at: string;
 }

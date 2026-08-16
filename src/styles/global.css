@@ -958,3 +958,110 @@ textarea.form-input {
   padding-top: 10px;
   border-top: 1px solid var(--border-color);
 }
+
+/* Visually hidden but still focusable/clickable — used for native file
+   inputs styled entirely via their own trigger button. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Image gallery (Venue/Field images modal) */
+.image-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+}
+
+.image-gallery-item {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 2px solid var(--border-color);
+  background: var(--bg-input);
+}
+
+.image-gallery-item.is-cover {
+  border-color: var(--primary);
+}
+
+.image-gallery-thumb {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  display: block;
+}
+
+.image-gallery-cover-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  gap: 4px;
+}
+
+.image-gallery-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-color);
+}
+
+.image-gallery-actions .icon-btn {
+  width: 26px;
+  height: 26px;
+}
+
+.image-gallery-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 40px 16px;
+  color: var(--text-dim);
+}
+
+/* Single image field (Item photo, avatars) */
+.single-image-field {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.single-image-preview {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-input);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.single-image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.single-image-preview.is-circle {
+  border-radius: 50%;
+}
+
+.single-image-controls {
+  display: flex;
+  gap: 10px;
+}
