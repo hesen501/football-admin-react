@@ -22,6 +22,7 @@ import Modal from '../components/common/Modal';
 import Pagination from '../components/common/Pagination';
 import StatusBadge from '../components/common/StatusBadge';
 import ImageGalleryModal from '../components/media/ImageGalleryModal';
+import SearchableSelect from '../components/common/SearchableSelect';
 
 const EMPTY_FORM: FieldFormData = {
   name: '',
@@ -192,21 +193,16 @@ const Fields: React.FC = () => {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <select
-          className="form-input"
+        <SearchableSelect
+          options={venues.map((v) => ({ value: v.id, label: v.name }))}
           value={venueFilter}
-          onChange={(e) => {
-            setVenueFilter(e.target.value ? Number(e.target.value) : '');
+          onChange={(v) => {
+            setVenueFilter(v);
             setPage(1);
           }}
-        >
-          <option value="">Bütün məkanlar</option>
-          {venues.map((v) => (
-            <option key={v.id} value={v.id}>
-              {v.name}
-            </option>
-          ))}
-        </select>
+          placeholder="Məkan axtar…"
+          emptyOptionLabel="Bütün məkanlar"
+        />
         <select
           className="form-input"
           value={statusFilter}
@@ -332,19 +328,14 @@ const Fields: React.FC = () => {
           >
             <div className="form-group">
               <label className="form-label">Məkan</label>
-              <select
-                className="form-input"
-                required
-                disabled={Boolean(editing)}
+              <SearchableSelect
+                options={venues.map((v) => ({ value: v.id, label: v.name }))}
                 value={selectedVenueId}
-                onChange={(e) => setSelectedVenueId(Number(e.target.value))}
-              >
-                {venues.map((v) => (
-                  <option key={v.id} value={v.id}>
-                    {v.name}
-                  </option>
-                ))}
-              </select>
+                onChange={(v) => setSelectedVenueId(v)}
+                placeholder="Məkan seçin…"
+                disabled={Boolean(editing)}
+                required
+              />
               {editing && <span className="form-hint">Yaradıldıqdan sonra məkan dəyişdirilə bilməz.</span>}
             </div>
             <div className="form-group">

@@ -115,7 +115,8 @@ describe('BookingDetails page', () => {
     renderPage();
     await screen.findByText('Hələ heç bir məhsul əlavə edilməyib.');
 
-    await user.selectOptions(screen.getByRole('combobox'), '1');
+    await user.click(screen.getByRole('combobox'));
+    await user.click(screen.getByRole('option', { name: /water bottle/i }));
     await user.click(screen.getByRole('button', { name: /^əlavə et$/i }));
 
     await waitFor(() => expect(mockedBookingsApi.addBookingItem).toHaveBeenCalledWith(10, 1));
@@ -206,7 +207,8 @@ describe('BookingDetails page', () => {
     renderPage();
     await screen.findByText('Hələ heç bir məhsul əlavə edilməyib.');
 
-    await user.selectOptions(screen.getByRole('combobox'), '1');
+    await user.click(screen.getByRole('combobox'));
+    await user.click(screen.getByRole('option', { name: /water bottle/i }));
     await user.click(screen.getByRole('button', { name: /^əlavə et$/i }));
 
     expect(await screen.findByText('This item is not available.')).toBeInTheDocument();
