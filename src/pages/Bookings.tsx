@@ -22,6 +22,7 @@ import { getErrorMessage } from '../utils/errors';
 import Modal from '../components/common/Modal';
 import Pagination from '../components/common/Pagination';
 import StatusBadge from '../components/common/StatusBadge';
+import SearchableSelect from '../components/common/SearchableSelect';
 
 const currency = (value: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
@@ -171,37 +172,27 @@ const Bookings: React.FC = () => {
       </div>
 
       <div className="filter-bar">
-        <select
-          className="form-input"
+        <SearchableSelect
+          options={venues.map((v) => ({ value: v.id, label: v.name }))}
           value={venueFilter}
-          onChange={(e) => {
-            setVenueFilter(e.target.value ? Number(e.target.value) : '');
+          onChange={(v) => {
+            setVenueFilter(v);
             setPage(1);
           }}
-        >
-          <option value="">Bütün məkanlar</option>
-          {venues.map((v) => (
-            <option key={v.id} value={v.id}>
-              {v.name}
-            </option>
-          ))}
-        </select>
-        <select
-          className="form-input"
+          placeholder="Məkan axtar…"
+          emptyOptionLabel="Bütün məkanlar"
+        />
+        <SearchableSelect
+          options={fields.map((f) => ({ value: f.id, label: f.name }))}
           value={fieldFilter}
-          disabled={!venueFilter}
-          onChange={(e) => {
-            setFieldFilter(e.target.value ? Number(e.target.value) : '');
+          onChange={(v) => {
+            setFieldFilter(v);
             setPage(1);
           }}
-        >
-          <option value="">Bütün sahələr</option>
-          {fields.map((f) => (
-            <option key={f.id} value={f.id}>
-              {f.name}
-            </option>
-          ))}
-        </select>
+          placeholder="Sahə axtar…"
+          emptyOptionLabel="Bütün sahələr"
+          disabled={!venueFilter}
+        />
         <select
           className="form-input"
           value={statusFilter}
@@ -357,55 +348,40 @@ const Bookings: React.FC = () => {
           >
             <div className="form-group">
               <label className="form-label">Müştəri</label>
-              <select
-                className="form-input"
-                required
+              <SearchableSelect
+                options={customers.map((c) => ({ value: c.id, label: `${c.name} (${c.email})` }))}
                 value={form.user_id || ''}
-                onChange={(e) => setForm({ ...form, user_id: Number(e.target.value) })}
-              >
-                <option value="">Müştəri seçin…</option>
-                {customers.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name} ({c.email})
-                  </option>
-                ))}
-              </select>
+                onChange={(v) => setForm({ ...form, user_id: v === '' ? 0 : v })}
+                placeholder="Müştəri seçin…"
+                required
+              />
             </div>
             <div className="form-row">
               <div className="form-group">
                 <label className="form-label">Məkan</label>
-                <select
-                  className="form-input"
+                <SearchableSelect
+                  options={venues.map((v) => ({ value: v.id, label: v.name }))}
                   value={createVenueId}
-                  onChange={(e) => {
-                    setCreateVenueId(e.target.value ? Number(e.target.value) : '');
+                  onChange={(v) => {
+                    setCreateVenueId(v);
                     setForm({ ...form, field_id: 0 });
                   }}
-                >
-                  <option value="">Məkan seçin…</option>
-                  {venues.map((v) => (
-                    <option key={v.id} value={v.id}>
-                      {v.name}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="Məkan seçin…"
+                />
               </div>
               <div className="form-group">
                 <label className="form-label">Sahə</label>
-                <select
-                  className="form-input"
-                  required
-                  disabled={!createVenueId}
+                <SearchableSelect
+                  options={createFieldOptions.map((f) => ({
+                    value: f.id,
+                    label: `${f.name} (${currency(f.hourly_price)}/saat)`,
+                  }))}
                   value={form.field_id || ''}
-                  onChange={(e) => setForm({ ...form, field_id: Number(e.target.value) })}
-                >
-                  <option value="">Sahə seçin…</option>
-                  {createFieldOptions.map((f) => (
-                    <option key={f.id} value={f.id}>
-                      {f.name} ({currency(f.hourly_price)}/saat)
-                    </option>
-                  ))}
-                </select>
+                  onChange={(v) => setForm({ ...form, field_id: v === '' ? 0 : v })}
+                  placeholder="Sahə seçin…"
+                  disabled={!createVenueId}
+                  required
+                />
               </div>
             </div>
             <div className="form-row">

@@ -10,6 +10,7 @@ import { User } from '../types/user';
 import { useNotification } from '../hooks/useNotification';
 import { getErrorMessage } from '../utils/errors';
 import Modal from '../components/common/Modal';
+import SearchableSelect from '../components/common/SearchableSelect';
 
 const todayIso = () => new Date().toISOString().slice(0, 10);
 
@@ -117,31 +118,19 @@ const Schedule: React.FC = () => {
       </div>
 
       <div className="filter-bar">
-        <select
-          className="form-input"
+        <SearchableSelect
+          options={venues.map((v) => ({ value: v.id, label: v.name }))}
           value={venueId}
-          onChange={(e) => setVenueId(e.target.value ? Number(e.target.value) : '')}
-        >
-          <option value="">Məkan seçin…</option>
-          {venues.map((v) => (
-            <option key={v.id} value={v.id}>
-              {v.name}
-            </option>
-          ))}
-        </select>
-        <select
-          className="form-input"
+          onChange={setVenueId}
+          placeholder="Məkan seçin…"
+        />
+        <SearchableSelect
+          options={fields.map((f) => ({ value: f.id, label: f.name }))}
           value={fieldId}
+          onChange={setFieldId}
+          placeholder="Sahə seçin…"
           disabled={!venueId}
-          onChange={(e) => setFieldId(e.target.value ? Number(e.target.value) : '')}
-        >
-          <option value="">Sahə seçin…</option>
-          {fields.map((f) => (
-            <option key={f.id} value={f.id}>
-              {f.name}
-            </option>
-          ))}
-        </select>
+        />
         <input type="date" className="form-input" value={date} onChange={(e) => setDate(e.target.value)} />
       </div>
 
@@ -191,19 +180,13 @@ const Schedule: React.FC = () => {
           </p>
           <div className="form-group">
             <label className="form-label">Müştəri</label>
-            <select
-              className="form-input"
-              required
+            <SearchableSelect
+              options={customers.map((c) => ({ value: c.id, label: `${c.name} (${c.email})` }))}
               value={bookingUserId}
-              onChange={(e) => setBookingUserId(e.target.value ? Number(e.target.value) : '')}
-            >
-              <option value="">Müştəri seçin…</option>
-              {customers.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name} ({c.email})
-                </option>
-              ))}
-            </select>
+              onChange={setBookingUserId}
+              placeholder="Müştəri seçin…"
+              required
+            />
           </div>
           <div className="form-group">
             <label className="form-label">Qeydlər</label>

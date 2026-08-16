@@ -8,6 +8,7 @@ import { Item } from '../types/item';
 import { useNotification } from '../hooks/useNotification';
 import { getErrorMessage } from '../utils/errors';
 import StatusBadge from '../components/common/StatusBadge';
+import SearchableSelect from '../components/common/SearchableSelect';
 
 const currency = (value: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
@@ -244,18 +245,12 @@ const BookingDetails: React.FC = () => {
           <div className="add-item-bar">
             <span className="form-label">Məhsul əlavə et</span>
             <div className="add-item-controls">
-              <select
-                className="form-input"
+              <SearchableSelect
+                options={activeItems.map((item) => ({ value: item.id, label: `${item.name} — ${currency(item.price)}` }))}
                 value={selectedItemId}
-                onChange={(e) => setSelectedItemId(e.target.value ? Number(e.target.value) : '')}
-              >
-                <option value="">Məhsul seçin…</option>
-                {activeItems.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.name} — {currency(item.price)}
-                  </option>
-                ))}
-              </select>
+                onChange={setSelectedItemId}
+                placeholder="Məhsul seçin…"
+              />
               <button
                 type="button"
                 className="btn btn-primary btn-sm"
